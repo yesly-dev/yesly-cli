@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"testing"
@@ -338,8 +339,12 @@ func TestLoginSavesAProfile(t *testing.T) {
 		t.Fatalf("check call = %+v", c)
 	}
 	info, err := os.Stat(path)
-	if err != nil || info.Mode().Perm() != 0o600 {
-		t.Fatalf("config file mode = %v, err %v", info.Mode(), err)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Windows has no Unix permission bits; the file sits in the user's profile there.
+	if runtime.GOOS != "windows" && info.Mode().Perm() != 0o600 {
+		t.Fatalf("config file mode = %v", info.Mode())
 	}
 	f, _ := config.Load()
 	p := f.Profile("staging")
