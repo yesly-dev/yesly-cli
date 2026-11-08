@@ -227,7 +227,7 @@ func versionCommand(app *App) *cobra.Command {
 		Args:  noArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			fmt.Fprintf(app.Out, "yesly %s\nAPI version %s\n", version.Version, spec.APIVersion)
-			if version.Commit != "" {
+			if version.Commit != "" && version.Commit != "none" {
 				fmt.Fprintf(app.Out, "commit %s %s\n", version.Commit, version.Date)
 			}
 			return nil
