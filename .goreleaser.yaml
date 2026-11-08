@@ -1,0 +1,54 @@
+# Builds the release archives for every platform and publishes them as a
+# GitHub release. Runs from .github/workflows/release.yml on a v* tag.
+version: 2
+
+project_name: yesly
+
+before:
+  hooks:
+    - go mod tidy -diff
+
+builds:
+  - id: yesly
+    main: ./cmd/yesly
+    binary: yesly
+    env:
+      - CGO_ENABLED=0
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X github.com/yesly-dev/yesly-cli/internal/version.Version={{ .Version }}
+      - -X github.com/yesly-dev/yesly-cli/internal/version.Commit={{ .ShortCommit }}
+      - -X github.com/yesly-dev/yesly-cli/internal/version.Date={{ .CommitDate }}
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+archives:
+  - id: yesly
+    name_template: "yesly_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    files:
+      - README.md
+      - LICENSE
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+release:
+  github:
+    owner: yesly-dev
+    name: yesly-cli
+  draft: false
+  prerelease: auto
