@@ -6,7 +6,7 @@ List endpoints
 
 List endpoints.
 
-Lists the webhook endpoints in the key's mode.
+Lists all the webhook endpoints in the key's mode, in one page.
 
 API: GET /webhook_endpoints
 
@@ -23,10 +23,8 @@ yesly webhook-endpoints list [flags]
 ### Options
 
 ```
-      --all                     follow every page and print all items as one JSON array
-  -h, --help                    help for list
-      --limit int               Between 1 and 100. Default 20.
-      --starting-after string   Cursor: the id of the last item of the previous page.
+      --all    follow every page and print all items as one JSON array
+  -h, --help   help for list
 ```
 
 ### Options inherited from parent commands

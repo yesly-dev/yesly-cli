@@ -9,10 +9,9 @@ Create an appointment.
 Creates an appointment and schedules the first contact. By default Yesly
 writes the day before at 10:00 and moves through your channels if there
 is no answer; if the appointment is booked after that moment, contact
-starts at the next allowed time within your contact hours.
-
-WhatsApp and SMS need a mobile number. If `customer.phone` is a
-landline, those channels are skipped and only the call runs.
+starts at the next allowed time within your contact hours. If no
+contact time is left before the slot starts, `first_contact_at` is
+`null` and the customer is not contacted.
 
 Idempotent by `external_id`: the same `external_id` with the same data
 returns the existing appointment with `200`; with different data, `409`.
@@ -38,16 +37,16 @@ yesly appointments create [flags]
 ### Options
 
 ```
-      --channels strings        Override the channel order for this appointment, such as ["whatsapp", "voice"]. Only channels enabled in your account. One of: whatsapp, sms, voice, email.
+      --channels strings        Override the channel order for this appointment, such as ["whatsapp", "voice"]. At least one, without repeats. Without it, your account's channels. One of: whatsapp, sms, voice, email.
       --customer.email string   Email for the email channel. Optional.
       --customer.name string    (required) Name used in the messages. A first name is enough.
       --customer.phone string   (required) Phone number in E.164 format, such as +34612345678.
   -d, --data string             JSON body, inline or @file (@- for stdin)
       --external-id string      (required) Your id for this appointment, such as the order or ticket number. Retrying with the same external_id is safe.
   -h, --help                    help for create
-      --location string         Location id. Required when the type happens at one of your locations; otherwise optional, and used to pass calls to that location's phone.
+      --location string         Location id, optional. For a type whose place is location, its name and address are shown in the email and on the answer page.
       --metadata stringArray    Your own key-value pairs, returned unchanged. Up to 20 keys, keys up to 40 characters, values up to 500 characters, strings only. Do not put personal data here. Repeat as key=value.
-      --slot.end string         End of the window. Leave it out for exact-time types; it is computed from the type's duration.
+      --slot.end string         End of the window, after start. Without it, start plus the type's minutes (60 if the account has no types).
       --slot.start string       (required) Start of the appointment or of the time window, with offset.
       --type string             Appointment type id. Required if your account has more than one type.
 ```

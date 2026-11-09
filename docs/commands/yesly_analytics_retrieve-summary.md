@@ -8,7 +8,8 @@ Summary.
 
 The figures behind the dashboard's Analytics page, for your own reports:
 outcomes, which channel got the answer, how long customers took, usage
-and spend. Days follow your account's time zone.
+and spend, in total and day by day. Appointments count on the day of
+their slot, in your account's time zone.
 
 API: GET /analytics/summary
 

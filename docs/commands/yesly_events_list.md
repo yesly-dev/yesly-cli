@@ -25,11 +25,11 @@ yesly events list [flags]
 ```
       --all                     follow every page and print all items as one JSON array
       --appointment string      Only events about this appointment.
-      --from string             Events created on or after this time.
+      --from string             Events created on or after this time. A day alone means 00:00 UTC.
   -h, --help                    help for list
       --limit int               Between 1 and 100. Default 20.
       --starting-after string   Cursor: the id of the last item of the previous page.
-      --type string             Only this event type. appointment.* matches a whole group.
+      --type string             Only this event type, matched exactly.
 ```
 
 ### Options inherited from parent commands

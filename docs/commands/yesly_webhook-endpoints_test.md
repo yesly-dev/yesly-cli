@@ -6,9 +6,12 @@ Send a test event
 
 Send a test event.
 
-Sends a sample event, marked `"mode": "test"`, to the endpoint and
+Sends a sample event to the endpoint, signed like a real one, and
 returns what it answered. Useful to check the URL and your signature
-check before going live.
+check before going live. The event has the `mode` of the key that
+calls this, and `data` is always a sample `appointment` (with only
+some fields), whatever the `type`. It is not stored, so it does not
+appear in List events.
 
 API: POST /webhook_endpoints/{id}/test
 

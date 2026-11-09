@@ -6,7 +6,7 @@ Create an appointment type
 
 Create an appointment type.
 
-Adds an appointment type. Message templates pick it up at once through `{type}`, `{time}` and `{instructions}`.
+Adds an appointment type. Its name and time format are used in the messages sent from then on.
 
 API: POST /appointment_types
 
@@ -26,11 +26,13 @@ yesly appointment-types create [flags]
 ### Options
 
 ```
+      --cancellable              Default true.
   -d, --data string              JSON body, inline or @file (@- for stdin)
+      --first-contact string     Its own first message. Leave it out (or null) to use your account's setting. JSON, inline or @file.
   -h, --help                     help for create
-      --id string                (required) Lowercase letters, numbers, - and _. Cannot change later.
+      --id string                (required) 1 to 40 lowercase letters, numbers, - and _. Cannot change later.
       --idempotency-key string   Idempotency-Key header (default: a new UUID, reused on retries)
-      --instructions string      Optional instructions for the customer.
+      --instructions string      Optional instructions for the customer. Not included in messages today.
       --minutes int              (required) Window length or duration.
       --name string              (required) Name shown to the customer.
       --place string             (required) customer (at the customer's address) or location (at one of your locations). One of: customer, location.

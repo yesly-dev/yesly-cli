@@ -6,7 +6,7 @@ List balance transactions
 
 List balance transactions.
 
-Every charge and top-up, newest first. Charges point to the appointment and its `external_id`, so you can pass the cost on to an order, route or customer.
+Every charge, top-up and adjustment, newest first. Charges point to the appointment and its `external_id`, so you can pass the cost on to an order, route or customer. Refunds of failed messages (`adjustment`) do not point to the appointment.
 
 API: GET /balance/transactions
 
@@ -25,12 +25,12 @@ yesly balance list-transactions [flags]
 ```
       --all                     follow every page and print all items as one JSON array
       --appointment string      Only charges for this appointment.
-      --from string             On or after this day or time.
+      --from string             On or after this day or time. A day alone means 00:00 UTC.
   -h, --help                    help for list-transactions
       --limit int               Between 1 and 100. Default 20.
       --starting-after string   Cursor: the id of the last item of the previous page.
-      --to string               Before this day or time.
-      --type string             usage or top_up. One of: usage, top_up.
+      --to string               On or before this day or time. A day alone means 23:59:59 UTC.
+      --type string             usage, top_up or adjustment. One of: usage, top_up, adjustment.
 ```
 
 ### Options inherited from parent commands

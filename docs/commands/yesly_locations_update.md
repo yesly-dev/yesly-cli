@@ -32,7 +32,7 @@ yesly locations update <id> [flags]
   -d, --data string             JSON body, inline or @file (@- for stdin)
   -h, --help                    help for update
       --name string             New name.
-      --transfer-phone string   New transfer phone, E.164. An empty string removes it.
+      --transfer-phone string   New transfer phone, E.164. An empty string or null removes it.
 ```
 
 ### Options inherited from parent commands

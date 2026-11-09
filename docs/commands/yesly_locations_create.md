@@ -29,10 +29,10 @@ yesly locations create [flags]
       --address string           (required) Full address.
   -d, --data string              JSON body, inline or @file (@- for stdin)
   -h, --help                     help for create
-      --id string                (required) Lowercase letters, numbers, - and _. Cannot change later.
+      --id string                (required) 1 to 40 lowercase letters, numbers, - and _. Cannot change later.
       --idempotency-key string   Idempotency-Key header (default: a new UUID, reused on retries)
       --name string              (required) Name shown to the customer.
-      --transfer-phone string    Phone for call transfers, E.164.
+      --transfer-phone string    Phone for call transfers, E.164. Not checked; live calls do not transfer today.
 ```
 
 ### Options inherited from parent commands

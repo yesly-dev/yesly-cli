@@ -28,12 +28,14 @@ yesly appointment-types update <id> [flags]
 ### Options
 
 ```
-  -d, --data string           JSON body, inline or @file (@- for stdin)
-  -h, --help                  help for update
-      --instructions string   New instructions. An empty string removes them.
-      --minutes int           New window length or duration.
-      --name string           New name.
-      --reschedulable         Whether the customer may ask for another date.
+      --cancellable            Whether the customer may cancel.
+  -d, --data string            JSON body, inline or @file (@- for stdin)
+      --first-contact string   Its own first message; null goes back to your account's setting. JSON, inline or @file.
+  -h, --help                   help for update
+      --instructions string    New instructions. An empty string clears them.
+      --minutes int            New window length or duration.
+      --name string            New name.
+      --reschedulable          Whether the customer may ask for another date.
 ```
 
 ### Options inherited from parent commands

@@ -7,12 +7,15 @@ Update an appointment
 Update an appointment.
 
 Changes an appointment. Send only what changes. `metadata` is merged:
-keys you send are set, a key sent as an empty string is removed.
+keys you send are set, a key sent as `null` or an empty string is
+removed.
 
-If you change the slot or the customer's phone, Yesly starts the
-confirmation again: the status goes back to `scheduled`, any previous
-answer is cleared and a new `first_contact_at` is computed. Changes to
-metadata or the name never contact the customer.
+If you change the slot start, the customer's phone or email, or
+`channels`, Yesly starts the confirmation again: the status goes back
+to `scheduled`, any previous answer and `reschedule_request` are
+cleared and a new `first_contact_at` is computed. Other changes, such
+as metadata, the name, the type or the location, never contact the
+customer.
 
 API: PATCH /appointments/{id}
 
@@ -35,15 +38,15 @@ yesly appointments update <id> [flags]
 ### Options
 
 ```
-      --channels strings        New channel order for this appointment. One of: whatsapp, sms, voice, email.
+      --channels strings        New channel order for this appointment. At least one, without repeats. One of: whatsapp, sms, voice, email.
       --customer.email string   New email; null removes it.
       --customer.name string    New name.
       --customer.phone string   Phone number in E.164 format, such as +34612345678.
   -d, --data string             JSON body, inline or @file (@- for stdin)
   -h, --help                    help for update
-      --location string         New location id.
-      --metadata stringArray    Keys to set, merged with the existing ones. An empty string removes the key. Repeat as key=value.
-      --slot.end string         New end of the window.
+      --location string         New location id; null removes it.
+      --metadata stringArray    Keys to set, merged with the existing ones. A value of null or an empty string removes the key. At most 20 keys after the merge. Repeat as key=value.
+      --slot.end string         New end of the window. Without it, the new start plus the current length (or the new type's minutes, if you change the type).
       --slot.start string       New start, with offset.
       --type string             New appointment type id.
 ```

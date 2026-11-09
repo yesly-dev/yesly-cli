@@ -6,7 +6,10 @@ List appointments
 
 List appointments.
 
-Lists appointments, newest first. A common use is to ask, each
+Lists appointments. With `status`, `date`, `from`, `to` or `metadata`
+the list is in slot order, soonest first; otherwise it is newest
+first, by creation. A `date`, `from` or `to` filter without `status`
+or `metadata` covers at most 62 days. A common use is to ask, each
 afternoon, which of tomorrow's appointments ended with `no_reply` so
 your team can call them.
 
@@ -30,14 +33,14 @@ yesly appointments list [flags]
       --all                     follow every page and print all items as one JSON array
       --date string             Only appointments whose slot starts on this day, YYYY-MM-DD in your account's time zone.
       --external-id string      The appointment with this external_id.
-      --from string             Slot starts on or after this time.
+      --from string             Slot starts on or after this day or time. A day starts at 00:00 in your account's time zone.
   -h, --help                    help for list
       --limit int               Between 1 and 100. Default 20.
       --location string         Only this location.
       --metadata stringArray    Only appointments whose metadata has this value, such as metadata[route_id]=BIO-07. Repeat as key=value.
       --starting-after string   Cursor: the id of the last item of the previous page.
       --status string           Only appointments in this status. One of: scheduled, in_progress, confirmed, rescheduled, reschedule_requested, cancelled, no_reply.
-      --to string               Slot starts before this time.
+      --to string               Slot starts on or before this day or time. A day ends at 23:59:59 in your account's time zone.
       --type string             Only this appointment type.
 ```
 
