@@ -24,14 +24,12 @@ yesly events list [flags]
 
 ```
       --all                     follow every page and print all items as one JSON array
-      --appointment string      Only events about this appointment. Same as subject with an appointment id.
+      --appointment string      Only events about this appointment.
       --from string             Events created on or after this time. A day alone means 00:00 UTC.
   -h, --help                    help for list
       --limit int               Between 1 and 100. Default 20.
       --starting-after string   Cursor: the id of the last item of the previous page.
-      --subject string          Only events about this object, by its id (today an appointment, apt_…).
       --type string             Only this event type, matched exactly.
-      --use-case string         Only events of this use case. Leaves out the account's own balance.* events. One of: appointments.
 ```
 
 ### Options inherited from parent commands

@@ -30,7 +30,7 @@ yesly webhook-endpoints create [flags]
       --api-version string       Stored and returned as sent; default 2026-10-01. It does not change the events.
   -d, --data string              JSON body, inline or @file (@- for stdin)
       --description string       Optional note.
-      --enabled-events strings   (required) Event types sent to the endpoint. ["*"] for all; a family such as appointment.* for every event of one object, including types added later. One of: appointment.created, appointment.confirmed, appointment.rescheduled, appointment.reschedule_requested, appointment.cancelled, appointment.no_reply, message.sent, message.delivered, message.failed, call.started, call.completed, call.transferred, balance.low, balance.topped_up, *, appointment.*, message.*, call.*, balance.*.
+      --enabled-events strings   (required) Event types sent to the endpoint. ["*"] for all. One of: appointment.created, appointment.confirmed, appointment.rescheduled, appointment.reschedule_requested, appointment.cancelled, appointment.no_reply, message.sent, message.delivered, message.failed, call.started, call.completed, call.transferred, balance.low, balance.topped_up, *.
   -h, --help                     help for create
       --idempotency-key string   Idempotency-Key header (default: a new UUID, reused on retries)
       --url string               (required) HTTPS URL on a public host, without a user name or password (url_invalid otherwise). Deliveries to a self-signed certificate fail.

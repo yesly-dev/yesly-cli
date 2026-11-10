@@ -2,7 +2,7 @@
 
 The official command-line interface for the Yesly API.
 
-> Status: 0.4.0. Covers API version `2026-10-01`.
+> Status: 0.3.0. Covers API version `2026-10-01`.
 
 Every operation of the API reference is a command, with a flag for each
 field. The CLI also signs and verifies webhook payloads and forwards your
