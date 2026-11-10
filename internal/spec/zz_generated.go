@@ -311,7 +311,7 @@ var Operations = []Operation{
 		Description: "Adds a webhook endpoint in the key's mode. Live and test endpoints are separate.",
 		Body: []Field{
 			{Name: "url", Kind: String, Required: true, Description: "HTTPS URL on a public host, without a user name or password (url_invalid otherwise). Deliveries to a self-signed certificate fail."},
-			{Name: "enabled_events", Kind: StringList, Required: true, Enum: []string{"appointment.created", "appointment.confirmed", "appointment.rescheduled", "appointment.reschedule_requested", "appointment.cancelled", "appointment.no_reply", "message.sent", "message.delivered", "message.failed", "call.started", "call.completed", "call.transferred", "balance.low", "balance.topped_up", "*"}, Description: "Event types sent to the endpoint. [\"*\"] for all."},
+			{Name: "enabled_events", Kind: StringList, Required: true, Enum: []string{"appointment.created", "appointment.confirmed", "appointment.rescheduled", "appointment.reschedule_requested", "appointment.cancelled", "appointment.no_reply", "message.sent", "message.delivered", "message.failed", "call.started", "call.completed", "call.transferred", "balance.low", "balance.topped_up", "*", "appointment.*", "message.*", "call.*", "balance.*"}, Description: "Event types sent to the endpoint. [\"*\"] for all; a family such as appointment.* for every event of one object, including types added later."},
 			{Name: "description", Kind: String, Description: "Optional note."},
 			{Name: "api_version", Kind: String, Description: "Stored and returned as sent; default 2026-10-01. It does not change the events."},
 		},
@@ -328,7 +328,7 @@ var Operations = []Operation{
 		PathParams:  []Param{{Name: "id", Description: "Id of the webhook endpoint, prefixed we_."}},
 		Body: []Field{
 			{Name: "url", Kind: String, Description: "New URL."},
-			{Name: "enabled_events", Kind: StringList, Enum: []string{"appointment.created", "appointment.confirmed", "appointment.rescheduled", "appointment.reschedule_requested", "appointment.cancelled", "appointment.no_reply", "message.sent", "message.delivered", "message.failed", "call.started", "call.completed", "call.transferred", "balance.low", "balance.topped_up", "*"}, Description: "Replaces the list of event types."},
+			{Name: "enabled_events", Kind: StringList, Enum: []string{"appointment.created", "appointment.confirmed", "appointment.rescheduled", "appointment.reschedule_requested", "appointment.cancelled", "appointment.no_reply", "message.sent", "message.delivered", "message.failed", "call.started", "call.completed", "call.transferred", "balance.low", "balance.topped_up", "*", "appointment.*", "message.*", "call.*", "balance.*"}, Description: "Replaces the list of event types."},
 			{Name: "description", Kind: String, Description: "New note."},
 			{Name: "disabled", Kind: Bool, Description: "true stops sending events to it and drops its pending retries. false enables it again and resets its count of failed deliveries."},
 		},
@@ -376,7 +376,9 @@ var Operations = []Operation{
 		Description: "Lists events from the last 30 days, newest first. Use it to catch up after downtime on your side.",
 		Query: []Field{
 			{Name: "type", Kind: String, Description: "Only this event type, matched exactly."},
-			{Name: "appointment", Kind: String, Description: "Only events about this appointment."},
+			{Name: "use_case", Kind: String, Enum: []string{"appointments"}, Description: "Only events of this use case. Leaves out the account's own balance.* events."},
+			{Name: "subject", Kind: String, Description: "Only events about this object, by its id (today an appointment, apt_…)."},
+			{Name: "appointment", Kind: String, Description: "Only events about this appointment. Same as subject with an appointment id."},
 			{Name: "from", Kind: String, Description: "Events created on or after this time. A day alone means 00:00 UTC."},
 			{Name: "limit", Kind: Integer, Default: "20", Description: "Between 1 and 100. Default 20."},
 			{Name: "starting_after", Kind: String, Description: "Cursor: the id of the last item of the previous page."},
@@ -409,7 +411,9 @@ var Operations = []Operation{
 		Description: "Every charge, top-up and adjustment, newest first. Charges point to the appointment and its `external_id`, so you can pass the cost on to an order, route or customer. Refunds of failed messages (`adjustment`) do not point to the appointment.",
 		Query: []Field{
 			{Name: "type", Kind: String, Enum: []string{"usage", "top_up", "adjustment"}, Description: "usage, top_up or adjustment."},
-			{Name: "appointment", Kind: String, Description: "Only charges for this appointment."},
+			{Name: "use_case", Kind: String, Enum: []string{"appointments"}, Description: "Only charges of this use case. Top-ups and adjustments belong to the account and are left out."},
+			{Name: "subject", Kind: String, Description: "Only charges for this object, by its id (today an appointment, apt_…)."},
+			{Name: "appointment", Kind: String, Description: "Only charges for this appointment. Same as subject with an appointment id."},
 			{Name: "from", Kind: String, Description: "On or after this day or time. A day alone means 00:00 UTC."},
 			{Name: "to", Kind: String, Description: "On or before this day or time. A day alone means 23:59:59 UTC."},
 			{Name: "limit", Kind: Integer, Default: "20", Description: "Between 1 and 100. Default 20."},
@@ -425,6 +429,7 @@ var Operations = []Operation{
 		Summary:     "Summary",
 		Description: "The figures behind the dashboard's Analytics page, for your own reports:\noutcomes, which channel got the answer, how long customers took, usage\nand spend, in total and day by day. Appointments count on the day of\ntheir slot, in your account's time zone.",
 		Query: []Field{
+			{Name: "use_case", Kind: String, Enum: []string{"appointments"}, Description: "The use case whose figures you want. Each use case has its own; today only appointments."},
 			{Name: "range", Kind: String, Enum: []string{"7d", "30d", "90d"}, Default: "7d", Description: "Days covered, ending today."},
 			{Name: "type", Kind: String, Description: "Only this appointment type."},
 			{Name: "location", Kind: String, Description: "Only this location."},

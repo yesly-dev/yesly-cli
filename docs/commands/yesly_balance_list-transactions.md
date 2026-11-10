@@ -24,13 +24,15 @@ yesly balance list-transactions [flags]
 
 ```
       --all                     follow every page and print all items as one JSON array
-      --appointment string      Only charges for this appointment.
+      --appointment string      Only charges for this appointment. Same as subject with an appointment id.
       --from string             On or after this day or time. A day alone means 00:00 UTC.
   -h, --help                    help for list-transactions
       --limit int               Between 1 and 100. Default 20.
       --starting-after string   Cursor: the id of the last item of the previous page.
+      --subject string          Only charges for this object, by its id (today an appointment, apt_…).
       --to string               On or before this day or time. A day alone means 23:59:59 UTC.
       --type string             usage, top_up or adjustment. One of: usage, top_up, adjustment.
+      --use-case string         Only charges of this use case. Top-ups and adjustments belong to the account and are left out. One of: appointments.
 ```
 
 ### Options inherited from parent commands

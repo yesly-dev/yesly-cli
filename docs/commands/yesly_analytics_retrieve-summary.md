@@ -30,6 +30,7 @@ yesly analytics retrieve-summary [flags]
       --location string   Only this location.
       --range string      Days covered, ending today. One of: 7d, 30d, 90d.
       --type string       Only this appointment type.
+      --use-case string   The use case whose figures you want. Each use case has its own; today only appointments. One of: appointments.
 ```
 
 ### Options inherited from parent commands
