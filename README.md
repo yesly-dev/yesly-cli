@@ -2,7 +2,7 @@
 
 The official command-line interface for the Yesly API.
 
-> Status: 0.2.0. Covers API version `2026-10-01`.
+> Status: 0.3.0. Covers API version `2026-10-01`.
 
 Every operation of the API reference is a command, with a flag for each
 field. The CLI also signs and verifies webhook payloads and forwards your
@@ -142,6 +142,48 @@ yesly api PATCH /locations/bilbao --data @location.json
 `false`, `null`, numbers, JSON, or `@file`). For GET and DELETE they become
 query parameters; otherwise they go in the body, where `customer.name` or
 `customer[name]` nests and `channels[]` appends.
+
+## Integration checklist
+
+The usual integration is two calls: create an appointment as soon as it is
+booked, and handle the customer's answer on a webhook. These are the points an
+integration most often gets wrong; check them before going live. The whole API
+reference is also in Markdown, for agents and other tools:
+[llms-full.txt](https://yesly.dev/llms-full.txt) (index in
+[llms.txt](https://yesly.dev/llms.txt), OpenAPI in
+[openapi.yaml](https://yesly.dev/openapi.yaml)).
+
+1. **Set up the appointment types first** (`yesly appointment-types create`,
+   or in the dashboard). A type sets how the time reads (`time_format`:
+   `window`, "between 9:00 and 11:00", or `exact`, "at 17:30"), when the first
+   message goes out (`first_contact`) and how far the customer may move it
+   (`reschedule`). With a `window` type, `slot.end` is required
+   (`slot_end_required`). Send `type` with every appointment when the account
+   has more than one type.
+2. **Use your own id as `external_id`**: the order, booking or visit number.
+   Creating is idempotent by it, so sending the same appointment again returns
+   the existing one, and the same id with different data is a `409`
+   `external_id_conflict`. To change the time or the customer, update the
+   appointment (`yesly appointments update`) instead of creating a new one.
+3. **Send times with an offset** (`2026-11-13T09:00:00+01:00`) and phones in
+   E.164. Yesly contacts Spanish numbers only, and no premium or special-rate
+   ones (`phone_not_allowed`).
+4. **Handle the answer on a webhook.** Verify the signature over the raw body,
+   answer `2xx` within 10 seconds before doing slow work, and skip event ids
+   you have already handled: a delivery can arrive more than once. The
+   outcomes are `appointment.confirmed`, `appointment.cancelled`,
+   `appointment.rescheduled`, `appointment.reschedule_requested` and
+   `appointment.no_reply`; each carries your `external_id` and `metadata`.
+5. **Build and test with a `ysk_test_` key.** The test phone numbers choose
+   the outcome (`+34600000001` confirms on WhatsApp, `+34600000009` never
+   answers; the full table is in the reference) and the chain runs in seconds.
+   A real number with a test key is refused (`test_number_required`).
+6. **Retry only what can succeed.** The CLI already retries network errors,
+   `408`, `429` and `5xx`, with the same idempotency key. A `4xx` fails the
+   same way again: fix the request using the error's `code` and `param`.
+7. **Keep keys on the server.** A read-only key can list and retrieve but not
+   write (`api_key_read_only`). With a `ysk_live_` key, commands that change
+   data also need `--live`.
 
 ## Webhooks
 
