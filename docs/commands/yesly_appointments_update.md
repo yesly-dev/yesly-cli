@@ -46,7 +46,7 @@ yesly appointments update <id> [flags]
   -h, --help                    help for update
       --location string         New location id; null removes it.
       --metadata stringArray    Keys to set, merged with the existing ones. A value of null or an empty string removes the key. At most 20 keys after the merge. Repeat as key=value.
-      --slot.end string         New end of the window. Without it, the new start plus the current length (or the new type's minutes, if you change the type).
+      --slot.end string         New end of the window. Without it, a window keeps its current length; an exact time needs none.
       --slot.start string       New start, with offset.
       --type string             New appointment type id.
 ```

@@ -34,9 +34,11 @@ yesly appointments [flags]
 
 * [yesly](yesly.md)	 - Work with the Yesly API from your terminal
 * [yesly appointments cancel](yesly_appointments_cancel.md)	 - Cancel an appointment
+* [yesly appointments count](yesly_appointments_count.md)	 - Count appointments by status
 * [yesly appointments create](yesly_appointments_create.md)	 - Create an appointment
 * [yesly appointments import](yesly_appointments_import.md)	 - Import appointments
 * [yesly appointments list](yesly_appointments_list.md)	 - List appointments
+* [yesly appointments recording](yesly_appointments_recording.md)	 - Get a call recording
 * [yesly appointments retrieve](yesly_appointments_retrieve.md)	 - Retrieve an appointment
 * [yesly appointments update](yesly_appointments_update.md)	 - Update an appointment
 

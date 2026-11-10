@@ -67,7 +67,7 @@ yesly analytics retrieve-summary --range 30d
 
 | Resource | Operations |
 | --- | --- |
-| `appointments` | `list`, `create`, `retrieve`, `update`, `cancel`, `import` |
+| `appointments` | `list`, `count`, `create`, `retrieve`, `update`, `cancel`, `import`, `recording` |
 | `imports` | `retrieve` |
 | `appointment-types` | `list`, `create`, `update` |
 | `locations` | `list`, `create`, `update` |

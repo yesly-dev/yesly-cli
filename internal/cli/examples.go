@@ -14,7 +14,10 @@ var examples = map[string]string{
 	"appointments.retrieve": `  yesly appointments retrieve apt_…`,
 	"appointments.update": `  yesly appointments update apt_… --slot.start 2026-11-14T09:00:00+01:00 --slot.end 2026-11-14T11:00:00+01:00
   yesly appointments update apt_… --metadata route_id=BIO-09`,
-	"appointments.cancel": `  yesly appointments cancel apt_… --reason "Shop closed"`,
+	"appointments.count": `  yesly appointments count --date 2026-11-13
+  yesly appointments count --from 2026-11-01 --to 2026-11-30 --type delivery`,
+	"appointments.recording": `  yesly appointments recording apt_… att_…`,
+	"appointments.cancel":    `  yesly appointments cancel apt_… --reason "Shop closed"`,
 	"appointments.import": `  yesly appointments import --appointments @appointments.json
   yesly appointments import --data '{"appointments": [ … ]}'`,
 	"imports.retrieve":       `  yesly imports retrieve imp_…`,
@@ -23,7 +26,10 @@ var examples = map[string]string{
 	"slots.delete":           `  yesly slots delete slot_…`,
 	"appointment_types.list": `  yesly appointment-types list`,
 	"appointment_types.create": `  yesly appointment-types create --id delivery --name "Home delivery" \
-    --time-format window --minutes 120 --place customer`,
+    --time-format window --place customer --first-contact '{"days_before": 1, "at": "18:00"}' \
+    --reschedule.min-notice-hours 24 --reschedule.window-days 14
+  yesly appointment-types create --id repair --name "Boiler repair" \
+    --time-format exact --place customer --first-contact '{"hours_before": 3}'`,
 	"appointment_types.update": `  yesly appointment-types update delivery --instructions "Have the order number at hand" --reschedulable=false`,
 	"locations.list":           `  yesly locations list`,
 	"locations.create": `  yesly locations create --id bilbao --name "Bilbao depot" \

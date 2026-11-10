@@ -28,14 +28,15 @@ yesly appointment-types update <id> [flags]
 ### Options
 
 ```
-      --cancellable            Whether the customer may cancel.
-  -d, --data string            JSON body, inline or @file (@- for stdin)
-      --first-contact string   Its own first message; null goes back to your account's setting. JSON, inline or @file.
-  -h, --help                   help for update
-      --instructions string    New instructions. An empty string clears them.
-      --minutes int            New window length or duration.
-      --name string            New name.
-      --reschedulable          Whether the customer may ask for another date.
+      --cancellable                       Whether the customer may cancel.
+  -d, --data string                       JSON body, inline or @file (@- for stdin)
+      --first-contact string              When the first message goes out for appointments of a type: days_before and at ("the day before at 10:00", 0 for the same day), or hours_before (same-day services: "3 hours before"). Moved into your contact hours when it falls outside them. JSON, inline or @file.
+  -h, --help                              help for update
+      --instructions string               New instructions. An empty string clears them.
+      --name string                       New name.
+      --reschedulable                     Whether the customer may ask for another date.
+      --reschedule.min-notice-hours int   The new time is at least this many hours later.
+      --reschedule.window-days int        The new time is at most this many days later.
 ```
 
 ### Options inherited from parent commands

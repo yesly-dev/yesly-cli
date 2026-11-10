@@ -13,6 +13,9 @@ or `metadata` covers at most 62 days. A common use is to ask, each
 afternoon, which of tomorrow's appointments ended with `no_reply` so
 your team can call them.
 
+Calls in the list come without `transcript`; get the appointment
+(Retrieve an appointment) to read it.
+
 API: GET /appointments
 
 ```

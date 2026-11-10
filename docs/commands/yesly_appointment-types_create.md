@@ -20,24 +20,28 @@ yesly appointment-types create [flags]
 
 ```
   yesly appointment-types create --id delivery --name "Home delivery" \
-    --time-format window --minutes 120 --place customer
+    --time-format window --place customer --first-contact '{"days_before": 1, "at": "18:00"}' \
+    --reschedule.min-notice-hours 24 --reschedule.window-days 14
+  yesly appointment-types create --id repair --name "Boiler repair" \
+    --time-format exact --place customer --first-contact '{"hours_before": 3}'
 ```
 
 ### Options
 
 ```
-      --cancellable              Default true.
-  -d, --data string              JSON body, inline or @file (@- for stdin)
-      --first-contact string     Its own first message. Leave it out (or null) to use your account's setting. JSON, inline or @file.
-  -h, --help                     help for create
-      --id string                (required) 1 to 40 lowercase letters, numbers, - and _. Cannot change later.
-      --idempotency-key string   Idempotency-Key header (default: a new UUID, reused on retries)
-      --instructions string      Optional instructions for the customer. Not included in messages today.
-      --minutes int              (required) Window length or duration.
-      --name string              (required) Name shown to the customer.
-      --place string             (required) customer (at the customer's address) or location (at one of your locations). One of: customer, location.
-      --reschedulable            Default true.
-      --time-format string       (required) window ("between 9:00 and 11:00") or exact ("at 17:30"). One of: window, exact.
+      --cancellable                       Default true.
+  -d, --data string                       JSON body, inline or @file (@- for stdin)
+      --first-contact string              When the first message goes out. Default: the day before at 10:00. JSON, inline or @file.
+  -h, --help                              help for create
+      --id string                         (required) 1 to 40 lowercase letters, numbers, - and _. Cannot change later.
+      --idempotency-key string            Idempotency-Key header (default: a new UUID, reused on retries)
+      --instructions string               Optional instructions for the customer. Not included in messages today.
+      --name string                       (required) Name shown to the customer.
+      --place string                      (required) customer (at the customer's address) or location (at one of your locations). One of: customer, location.
+      --reschedulable                     Default true.
+      --reschedule.min-notice-hours int   The new time is at least this many hours later.
+      --reschedule.window-days int        The new time is at most this many days later.
+      --time-format string                (required) window ("between 9:00 and 11:00") or exact ("at 17:30"). One of: window, exact.
 ```
 
 ### Options inherited from parent commands

@@ -46,7 +46,7 @@ yesly appointments create [flags]
   -h, --help                    help for create
       --location string         Location id, optional. For a type whose place is location, its name and address are shown in the email and on the answer page.
       --metadata stringArray    Your own key-value pairs, returned unchanged. Up to 20 keys, keys up to 40 characters, values up to 500 characters, strings only. Do not put personal data here. Repeat as key=value.
-      --slot.end string         End of the window, after start. Without it, start plus the type's minutes (60 if the account has no types).
+      --slot.end string         End of the window, after start. Required unless the type is exact (then it may be left out, and end is start).
       --slot.start string       (required) Start of the appointment or of the time window, with offset.
       --type string             Appointment type id. Required if your account has more than one type.
 ```

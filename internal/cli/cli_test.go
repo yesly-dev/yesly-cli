@@ -155,12 +155,12 @@ func TestTypedFlags(t *testing.T) {
 	setup(t)
 	api := newFakeAPI(t)
 	r := run(t, "", "appointment-types", "update", "delivery", "--api-key", "ysk_test_x", "--base-url", api.URL,
-		"--minutes", "90", "--reschedulable=false")
+		"--reschedule.window-days", "21", "--reschedulable=false")
 	if r.code != 0 {
 		t.Fatalf("exit %d: %s", r.code, r.err)
 	}
 	c := api.last(t)
-	if c.Method != "PATCH" || c.Path != "/appointment_types/delivery" || c.Body != `{"minutes":90,"reschedulable":false}` {
+	if c.Method != "PATCH" || c.Path != "/appointment_types/delivery" || c.Body != `{"reschedulable":false,"reschedule":{"window_days":21}}` {
 		t.Fatalf("%s %s %s", c.Method, c.Path, c.Body)
 	}
 }
