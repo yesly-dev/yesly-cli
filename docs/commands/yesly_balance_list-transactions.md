@@ -6,7 +6,7 @@ List balance transactions
 
 List balance transactions.
 
-Every charge, top-up and adjustment, newest first. Charges point to the appointment and its `external_id`, so you can pass the cost on to an order, route or customer. Refunds of failed messages (`adjustment`) do not point to the appointment.
+Every charge, top-up and adjustment, newest first. Charges point to the agent, the conversation and the message, so you can pass the cost on to an order or a customer.
 
 API: GET /balance/transactions
 
@@ -17,14 +17,15 @@ yesly balance list-transactions [flags]
 ### Examples
 
 ```
-  yesly balance list-transactions --type usage --from 2026-11-01 --all
+  yesly balance list-transactions --type usage --agent agt_8Hd2kQ4mZ1LpXy --from 2026-12-01 --all
 ```
 
 ### Options
 
 ```
+      --agent string            Only charges of this agent.
       --all                     follow every page and print all items as one JSON array
-      --appointment string      Only charges for this appointment.
+      --conversation string     Only charges of this conversation.
       --from string             On or after this day or time. A day alone means 00:00 UTC.
   -h, --help                    help for list-transactions
       --limit int               Between 1 and 100. Default 20.
@@ -37,7 +38,7 @@ yesly balance list-transactions [flags]
 
 ```
       --api-key string       API key; overrides YESLY_API_KEY and the profile
-      --api-version string   Yesly-Version header (default "2026-10-01")
+      --api-version string   Yesly-Version header (default "2026-11-11")
       --base-url string      API base URL; overrides YESLY_BASE_URL and the profile (default https://api.yesly.dev/v1)
       --compact              print JSON on one line
       --dry-run              print the request instead of sending it

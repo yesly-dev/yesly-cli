@@ -1,45 +1,42 @@
-## yesly locations update
+## yesly opt-outs create
 
-Update a location
+Add an opt-out
 
 ### Synopsis
 
-Update a location.
+Add an opt-out.
 
-Changes a location. Send only what changes.
+Load the opt-outs you already have: nothing more goes to that address on that channel, from any agent. `contact.opted_out` fires.
 
-API: PATCH /locations/{id}
-
-Arguments:
-  <id>  Id of the location, such as bilbao.
+API: POST /opt_outs
 
 Flags set the body's fields; --data sends a whole JSON body, and flags given with it override its fields.
 
 ```
-yesly locations update <id> [flags]
+yesly opt-outs create [flags]
 ```
 
 ### Examples
 
 ```
-  yesly locations update bilbao --transfer-phone +34944000001
+  yesly opt-outs create --channel sms --address +34600000001
 ```
 
 ### Options
 
 ```
-      --address string          New address.
-  -d, --data string             JSON body, inline or @file (@- for stdin)
-  -h, --help                    help for update
-      --name string             New name.
-      --transfer-phone string   New transfer phone, E.164. An empty string or null removes it.
+      --address string           (required) A phone in E.164 or an email address.
+      --channel string           (required) One of: call, sms, whatsapp, email.
+  -d, --data string              JSON body, inline or @file (@- for stdin)
+  -h, --help                     help for create
+      --idempotency-key string   Idempotency-Key header (default: a new UUID, reused on retries)
 ```
 
 ### Options inherited from parent commands
 
 ```
       --api-key string       API key; overrides YESLY_API_KEY and the profile
-      --api-version string   Yesly-Version header (default "2026-10-01")
+      --api-version string   Yesly-Version header (default "2026-11-11")
       --base-url string      API base URL; overrides YESLY_BASE_URL and the profile (default https://api.yesly.dev/v1)
       --compact              print JSON on one line
       --dry-run              print the request instead of sending it
@@ -51,5 +48,5 @@ yesly locations update <id> [flags]
 
 ### SEE ALSO
 
-* [yesly locations](yesly_locations.md)	 - Your centres, shops or depots, and the phone calls are passed to
+* [yesly opt-outs](yesly_opt-outs.md)	 - Addresses that receive nothing more on a channel
 

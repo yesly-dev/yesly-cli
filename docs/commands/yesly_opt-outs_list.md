@@ -1,44 +1,42 @@
-## yesly slots list
+## yesly opt-outs list
 
-(deprecated) List slots
+List opt-outs
 
 ### Synopsis
 
-Deprecated. List slots.
+List opt-outs.
 
-Lists published slots, soonest first.
+Newest first.
 
-API: GET /slots
+API: GET /opt_outs
 
 ```
-yesly slots list [flags]
+yesly opt-outs list [flags]
 ```
 
 ### Examples
 
 ```
-  yesly slots list --type delivery --from 2026-11-13 --to 2026-11-20 --available
+  yesly opt-outs list --channel sms
 ```
 
 ### Options
 
 ```
+      --address string          Only this phone or email.
       --all                     follow every page and print all items as one JSON array
-      --available               true for slots with room left.
-      --from string             Slots starting on or after this day or time.
+      --channel string          Only this channel. One of: call, sms, whatsapp, email.
+      --contact string          The opt-outs of every phone and email of this contact.
   -h, --help                    help for list
       --limit int               Between 1 and 100. Default 20.
-      --location string         Only this location.
       --starting-after string   Cursor: the id of the last item of the previous page.
-      --to string               Slots starting before this day or time.
-      --type string             Only this appointment type.
 ```
 
 ### Options inherited from parent commands
 
 ```
       --api-key string       API key; overrides YESLY_API_KEY and the profile
-      --api-version string   Yesly-Version header (default "2026-10-01")
+      --api-version string   Yesly-Version header (default "2026-11-11")
       --base-url string      API base URL; overrides YESLY_BASE_URL and the profile (default https://api.yesly.dev/v1)
       --compact              print JSON on one line
       --dry-run              print the request instead of sending it
@@ -50,5 +48,5 @@ yesly slots list [flags]
 
 ### SEE ALSO
 
-* [yesly slots](yesly_slots.md)	 - (deprecated) Free times published in Yesly
+* [yesly opt-outs](yesly_opt-outs.md)	 - Addresses that receive nothing more on a channel
 

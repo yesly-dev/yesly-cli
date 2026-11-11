@@ -20,17 +20,17 @@ yesly webhook-endpoints create [flags]
 
 ```
   yesly webhook-endpoints create --url https://example.com/yesly/webhook \
-    --enabled-events appointment.confirmed,appointment.no_reply
+    --enabled-events conversation.ended,conversation.no_reply
   yesly webhook-endpoints create --url https://example.com/yesly/webhook --enabled-events '*'
 ```
 
 ### Options
 
 ```
-      --api-version string       Stored and returned as sent; default 2026-10-01. It does not change the events.
+      --api-version string       Stored and returned as sent; default 2026-11-11. It does not change the events.
   -d, --data string              JSON body, inline or @file (@- for stdin)
       --description string       Optional note.
-      --enabled-events strings   (required) Event types sent to the endpoint. ["*"] for all. One of: appointment.created, appointment.confirmed, appointment.rescheduled, appointment.reschedule_requested, appointment.cancelled, appointment.no_reply, message.sent, message.delivered, message.failed, call.started, call.completed, call.transferred, balance.low, balance.topped_up, *.
+      --enabled-events strings   (required) Event types sent to the endpoint. ["*"] for all. One of: conversation.created, conversation.started, conversation.transferred, conversation.ended, conversation.no_reply, conversation.cancelled, conversation.failed, message.sent, message.delivered, message.failed, message.received, contact.created, contact.updated, contact.merged, contact.erased, contact.opted_out, contact.opted_in, agent.deployed, balance.low, balance.topped_up, *.
   -h, --help                     help for create
       --idempotency-key string   Idempotency-Key header (default: a new UUID, reused on retries)
       --url string               (required) HTTPS URL on a public host, without a user name or password (url_invalid otherwise). Deliveries to a self-signed certificate fail.

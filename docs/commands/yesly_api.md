@@ -11,7 +11,7 @@ Idempotency-Key.
 -f key=value adds a string; -F key=value adds a typed value (true, false,
 null, numbers and JSON stay as they are, @file reads a file). For GET and
 DELETE they become query parameters; otherwise they go in the JSON body,
-where "customer.name" or "customer[name]" nests and "channels[]" appends.
+where "contact.name" or "contact[name]" nests and "channels[]" appends.
 
 ```
 yesly api <method> <path> [flags]
@@ -20,10 +20,10 @@ yesly api <method> <path> [flags]
 ### Examples
 
 ```
-  yesly api GET /appointments -f status=no_reply -F limit=5
-  yesly api POST /appointments -f external_id=ORD-1 -f customer.name=Martha \
-    -f customer.phone=+34600000001 -f slot.start=2026-11-13T09:00:00+01:00
-  yesly api PATCH /appointments/apt_… --data @changes.json
+  yesly api GET /conversations -f status=no_reply -F limit=5
+  yesly api POST /conversations -f agent=agt_8Hd2kQ4mZ1LpXy -f contact.external_id=customer-3391 \
+    -f contact.phone=+34600000001 -f channels[]=whatsapp -f channels[]=call -f context.order=8841
+  yesly api PATCH /contacts/ctc_3Kf9Lq2Wm7Rt4B --data @changes.json
 ```
 
 ### Options
@@ -41,7 +41,7 @@ yesly api <method> <path> [flags]
 
 ```
       --api-key string       API key; overrides YESLY_API_KEY and the profile
-      --api-version string   Yesly-Version header (default "2026-10-01")
+      --api-version string   Yesly-Version header (default "2026-11-11")
       --base-url string      API base URL; overrides YESLY_BASE_URL and the profile (default https://api.yesly.dev/v1)
       --compact              print JSON on one line
       --dry-run              print the request instead of sending it

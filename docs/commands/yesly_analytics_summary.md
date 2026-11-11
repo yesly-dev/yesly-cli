@@ -1,4 +1,4 @@
-## yesly analytics retrieve-summary
+## yesly analytics summary
 
 Summary
 
@@ -6,37 +6,35 @@ Summary
 
 Summary.
 
-The figures behind the dashboard's Analytics page, for your own reports:
-outcomes, which channel got the answer, how long customers took, usage
-and spend, in total and day by day. Appointments count on the day of
-their slot, in your account's time zone.
+The figures behind the dashboard's Analytics page, for your own reports: conversations, outcomes, usage and spend, in total and day by day. Filter by agent, channel or direction.
 
 API: GET /analytics/summary
 
 ```
-yesly analytics retrieve-summary [flags]
+yesly analytics summary [flags]
 ```
 
 ### Examples
 
 ```
-  yesly analytics retrieve-summary --range 30d --type delivery
+  yesly analytics summary --range 30d --agent agt_8Hd2kQ4mZ1LpXy
 ```
 
 ### Options
 
 ```
-  -h, --help              help for retrieve-summary
-      --location string   Only this location.
-      --range string      Days covered, ending today. One of: 7d, 30d, 90d.
-      --type string       Only this appointment type.
+      --agent string       Only this agent's conversations.
+      --channel string     Only conversations whose last channel is this one. One of: call, sms, whatsapp, email.
+      --direction string   Only outbound or only inbound. One of: outbound, inbound.
+  -h, --help               help for summary
+      --range string       Days covered, ending today. One of: 7d, 30d, 90d.
 ```
 
 ### Options inherited from parent commands
 
 ```
       --api-key string       API key; overrides YESLY_API_KEY and the profile
-      --api-version string   Yesly-Version header (default "2026-10-01")
+      --api-version string   Yesly-Version header (default "2026-11-11")
       --base-url string      API base URL; overrides YESLY_BASE_URL and the profile (default https://api.yesly.dev/v1)
       --compact              print JSON on one line
       --dry-run              print the request instead of sending it

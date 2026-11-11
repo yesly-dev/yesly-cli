@@ -1,26 +1,37 @@
-## yesly locations
+## yesly contacts retrieve
 
-Your centres, shops or depots, and the phone calls are passed to
+Retrieve a contact
 
 ### Synopsis
 
-Your centres, shops or depots, and the phone calls are passed to.
+Retrieve a contact.
+
+API: GET /contacts/{id}
+
+Arguments:
+  <id>  Id of the contact, prefixed ctc_.
 
 ```
-yesly locations [flags]
+yesly contacts retrieve <id> [flags]
+```
+
+### Examples
+
+```
+  yesly contacts retrieve ctc_3Kf9Lq2Wm7Rt4B
 ```
 
 ### Options
 
 ```
-  -h, --help   help for locations
+  -h, --help   help for retrieve
 ```
 
 ### Options inherited from parent commands
 
 ```
       --api-key string       API key; overrides YESLY_API_KEY and the profile
-      --api-version string   Yesly-Version header (default "2026-10-01")
+      --api-version string   Yesly-Version header (default "2026-11-11")
       --base-url string      API base URL; overrides YESLY_BASE_URL and the profile (default https://api.yesly.dev/v1)
       --compact              print JSON on one line
       --dry-run              print the request instead of sending it
@@ -32,8 +43,5 @@ yesly locations [flags]
 
 ### SEE ALSO
 
-* [yesly](yesly.md)	 - Work with the Yesly API from your terminal
-* [yesly locations create](yesly_locations_create.md)	 - Create a location
-* [yesly locations list](yesly_locations_list.md)	 - List locations
-* [yesly locations update](yesly_locations_update.md)	 - Update a location
+* [yesly contacts](yesly_contacts.md)	 - Your customers, their identifiers, and what your agents remember about them
 

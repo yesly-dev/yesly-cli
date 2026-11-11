@@ -8,14 +8,14 @@ import (
 
 const (
 	secret = "whsec_test"
-	body   = `{"id":"evt_1","object":"event","type":"appointment.confirmed","data":{"appointment":{"id":"apt_1","external_id":"ORD-48213"}}}`
+	body   = `{"id":"evt_1","object":"event","type":"conversation.ended","data":{"conversation":{"id":"cnv_7Qp4Ns2Xk9Lm3D","outcome":{"code":"rescheduled","data":{"delivery_window":"2026-12-03T09:00/13:00"}}}}}`
 )
 
 var now = time.Unix(1794474252, 0)
 
 func TestSignMatchesTheOtherLibraries(t *testing.T) {
 	// The same vector as the Java and .NET SDK tests, computed with Python's hmac module.
-	want := "t=1794474252,v1=62b8ce65d20d98e1d1d8f14ff76317b0bf9b166a3dc5c2d980022e54c62e0a67"
+	want := "t=1794474252,v1=f60bd9a59d63d6f2d01cbdcd9aec4781af68e4d1e915aaff424817ce69921f83"
 	if got := Sign([]byte(body), secret, now); got != want {
 		t.Fatalf("Sign = %s, want %s", got, want)
 	}

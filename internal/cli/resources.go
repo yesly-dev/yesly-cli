@@ -56,9 +56,8 @@ func resourceShort(resource string) string {
 	return strings.TrimSuffix(short, ".")
 }
 
-var resourceFallback = map[string]string{
-	"imports": "Results of appointment imports",
-}
+// resourceFallback names resources the reference has no tag description for.
+var resourceFallback = map[string]string{}
 
 func operationCommand(app *App, op *spec.Operation) *cobra.Command {
 	use := kebab(op.Method)
@@ -228,7 +227,7 @@ func flagUsage(fl spec.Field) string {
 		u = strings.TrimSpace(u + " Repeat as key=value.")
 	}
 	if fl.Kind == spec.JSON {
-		u = strings.TrimSpace(u + " JSON, inline or @file.")
+		u = strings.TrimSpace(u + " JSON, inline or @file; a plain word, such as an id, is sent as a string.")
 	}
 	if len(fl.Enum) > 0 {
 		u = strings.TrimSpace(u + " One of: " + strings.Join(fl.Enum, ", ") + ".")
@@ -315,6 +314,11 @@ func value(fs *pflag.FlagSet, fl spec.Field, app *App) (any, error) {
 		}
 		var v any
 		if err := json.Unmarshal(b, &v); err != nil {
+			// Fields that take an id or an object (--contact ctc_… or --contact '{…}')
+			// accept the id unquoted. Anything that looks like JSON must parse.
+			if t := strings.TrimSpace(s); t != "" && !strings.HasPrefix(s, "@") && !strings.ContainsAny(t[:1], "{[\"") {
+				return s, nil
+			}
 			return nil, usagef("--%s is not valid JSON: %v", name, err)
 		}
 		return v, nil

@@ -1,39 +1,37 @@
-## yesly slots delete
+## yesly conversations retrieve
 
-(deprecated) Delete a slot
+Retrieve a conversation
 
 ### Synopsis
 
-Deprecated. Delete a slot.
+Retrieve a conversation.
 
-Stops offering a slot, for example when your own system fills it. Appointments already moved into it stay where they are.
-
-API: DELETE /slots/{id}
+API: GET /conversations/{id}
 
 Arguments:
-  <id>  Id of the slot, prefixed slt_.
+  <id>  Id of the conversation, prefixed cnv_.
 
 ```
-yesly slots delete <id> [flags]
+yesly conversations retrieve <id> [flags]
 ```
 
 ### Examples
 
 ```
-  yesly slots delete slot_…
+  yesly conversations retrieve cnv_7Qp4Ns2Xk9Lm3D
 ```
 
 ### Options
 
 ```
-  -h, --help   help for delete
+  -h, --help   help for retrieve
 ```
 
 ### Options inherited from parent commands
 
 ```
       --api-key string       API key; overrides YESLY_API_KEY and the profile
-      --api-version string   Yesly-Version header (default "2026-10-01")
+      --api-version string   Yesly-Version header (default "2026-11-11")
       --base-url string      API base URL; overrides YESLY_BASE_URL and the profile (default https://api.yesly.dev/v1)
       --compact              print JSON on one line
       --dry-run              print the request instead of sending it
@@ -45,5 +43,5 @@ yesly slots delete <id> [flags]
 
 ### SEE ALSO
 
-* [yesly slots](yesly_slots.md)	 - (deprecated) Free times published in Yesly
+* [yesly conversations](yesly_conversations.md)	 - Calls and threads of messages between an agent and a contact
 

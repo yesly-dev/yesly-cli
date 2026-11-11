@@ -26,11 +26,11 @@ Idempotency-Key.
 -f key=value adds a string; -F key=value adds a typed value (true, false,
 null, numbers and JSON stay as they are, @file reads a file). For GET and
 DELETE they become query parameters; otherwise they go in the JSON body,
-where "customer.name" or "customer[name]" nests and "channels[]" appends.`,
-		Example: `  yesly api GET /appointments -f status=no_reply -F limit=5
-  yesly api POST /appointments -f external_id=ORD-1 -f customer.name=Martha \
-    -f customer.phone=+34600000001 -f slot.start=2026-11-13T09:00:00+01:00
-  yesly api PATCH /appointments/apt_… --data @changes.json`,
+where "contact.name" or "contact[name]" nests and "channels[]" appends.`,
+		Example: `  yesly api GET /conversations -f status=no_reply -F limit=5
+  yesly api POST /conversations -f agent=agt_8Hd2kQ4mZ1LpXy -f contact.external_id=customer-3391 \
+    -f contact.phone=+34600000001 -f channels[]=whatsapp -f channels[]=call -f context.order=8841
+  yesly api PATCH /contacts/ctc_3Kf9Lq2Wm7Rt4B --data @changes.json`,
 		Args: func(_ *cobra.Command, args []string) error {
 			if len(args) != 2 {
 				return usagef("expected <method> <path>")
@@ -161,7 +161,7 @@ func typedValue(app *App, v string) (any, error) {
 	return v, nil
 }
 
-// setKey sets a key such as customer.name, customer[name] or channels[] in obj.
+// setKey sets a key such as contact.name, contact[name] or channels[] in obj.
 func setKey(obj map[string]any, key string, v any) error {
 	parts := splitKey(key)
 	cur := obj

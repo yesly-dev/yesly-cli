@@ -1,26 +1,24 @@
-## yesly appointments retrieve
+## yesly messages retrieve
 
-Retrieve an appointment
+Retrieve a message
 
 ### Synopsis
 
-Retrieve an appointment.
+Retrieve a message.
 
-Fetches an appointment with its attempts and answer. To find one by your own id, list with `external_id`.
-
-API: GET /appointments/{id}
+API: GET /messages/{id}
 
 Arguments:
-  <id>  Id of the appointment, prefixed apt_.
+  <id>  Id of the message, prefixed msg_.
 
 ```
-yesly appointments retrieve <id> [flags]
+yesly messages retrieve <id> [flags]
 ```
 
 ### Examples
 
 ```
-  yesly appointments retrieve apt_…
+  yesly messages retrieve msg_…
 ```
 
 ### Options
@@ -33,7 +31,7 @@ yesly appointments retrieve <id> [flags]
 
 ```
       --api-key string       API key; overrides YESLY_API_KEY and the profile
-      --api-version string   Yesly-Version header (default "2026-10-01")
+      --api-version string   Yesly-Version header (default "2026-11-11")
       --base-url string      API base URL; overrides YESLY_BASE_URL and the profile (default https://api.yesly.dev/v1)
       --compact              print JSON on one line
       --dry-run              print the request instead of sending it
@@ -45,5 +43,5 @@ yesly appointments retrieve <id> [flags]
 
 ### SEE ALSO
 
-* [yesly appointments](yesly_appointments.md)	 - Visits, deliveries or meetings Yesly confirms with your customers
+* [yesly messages](yesly_messages.md)	 - Each SMS, WhatsApp message, email and call; and one message outside a conversation
 

@@ -20,7 +20,7 @@ yesly analytics [flags]
 
 ```
       --api-key string       API key; overrides YESLY_API_KEY and the profile
-      --api-version string   Yesly-Version header (default "2026-10-01")
+      --api-version string   Yesly-Version header (default "2026-11-11")
       --base-url string      API base URL; overrides YESLY_BASE_URL and the profile (default https://api.yesly.dev/v1)
       --compact              print JSON on one line
       --dry-run              print the request instead of sending it
@@ -33,5 +33,5 @@ yesly analytics [flags]
 ### SEE ALSO
 
 * [yesly](yesly.md)	 - Work with the Yesly API from your terminal
-* [yesly analytics retrieve-summary](yesly_analytics_retrieve-summary.md)	 - Summary
+* [yesly analytics summary](yesly_analytics_summary.md)	 - Summary
 

@@ -2,7 +2,7 @@
 
 The official command-line interface for the Yesly API.
 
-> Status: 0.3.0. Covers API version `2026-10-01`.
+> Status: 0.4.0. Covers API version `2026-11-11`.
 
 Every operation of the API reference is a command, with a flag for each
 field. The CLI also signs and verifies webhook payloads and forwards your
@@ -41,60 +41,72 @@ environments as profiles:
 
 ```bash
 yesly login --profile acme
-yesly appointments list -p acme
+yesly conversations list -p acme
 yesly whoami -p acme      # which key, mode and base URL a command would use
 yesly logout -p acme
 ```
 
 ## Usage
 
-Commands follow the API reference: `yesly <resource> <operation>`.
+Commands follow the API reference: `yesly <resource> <operation>`. The usual
+flow is to ask an agent to contact someone, then read the outcome when the
+conversation ends:
 
 ```bash
-yesly appointments create --external-id ORD-48213 --type delivery \
-  --customer.name Martha --customer.phone +34612345678 \
-  --slot.start 2026-11-13T09:00:00+01:00 --slot.end 2026-11-13T11:00:00+01:00 \
-  --metadata order_id=PV-18342 --metadata route_id=BIO-07
+# Create the contact, or update it by your own id.
+yesly contacts create --external-id customer-3391 --name Marta --phone +34600000001
 
-yesly appointments list --status no_reply --date 2026-11-13
-yesly appointments retrieve apt_…
-yesly appointments update apt_… --slot.start 2026-11-14T09:00:00+01:00
-yesly appointments cancel apt_… --reason "Shop closed"
-yesly webhook-endpoints create --url https://example.com/yesly/webhook --enabled-events '*'
-yesly balance retrieve
-yesly analytics retrieve-summary --range 30d
+# Ask the delivery agent to contact her: WhatsApp first, then a call.
+yesly conversations create --agent agt_8Hd2kQ4mZ1LpXy --contact ctc_3Kf9Lq2Wm7Rt4B \
+  --channels whatsapp,call --start-at 2026-12-01T10:00:00+01:00 \
+  --context '{"order": "8841", "delivery_window": "2026-12-02T09:00/13:00"}' \
+  --idempotency-key order-8841-delivery
+
+yesly conversations retrieve cnv_7Qp4Ns2Xk9Lm3D        # status, outcome, cost
+yesly conversations list-messages cnv_7Qp4Ns2Xk9Lm3D   # what was said
+yesly conversations cancel cnv_7Qp4Ns2Xk9Lm3D
+yesly agents list
+yesly messages create --agent agt_8Hd2kQ4mZ1LpXy --contact ctc_3Kf9Lq2Wm7Rt4B --channel sms --text "Hola Marta"
+yesly webhook-endpoints create --url https://example.com/yesly/webhook --enabled-events conversation.ended
+yesly analytics summary --range 30d
 ```
+
+`--contact` takes a contact id or the data to find or create one, as JSON
+(`--contact '{"external_id": "customer-3391", "phone": "+34600000001"}'`), so
+the first command is optional.
 
 | Resource | Operations |
 | --- | --- |
-| `appointments` | `list`, `count`, `create`, `retrieve`, `update`, `cancel`, `import`, `recording` |
-| `imports` | `retrieve` |
-| `appointment-types` | `list`, `create`, `update` |
-| `locations` | `list`, `create`, `update` |
+| `agents` | `list`, `retrieve`, `update` |
+| `senders` | `list` |
+| `contacts` | `list`, `create`, `retrieve`, `update`, `delete`, `merge`, `list-memory`, `delete-memory` |
+| `conversations` | `list`, `create`, `retrieve`, `delete`, `cancel`, `list-messages`, `recording` |
+| `messages` | `list`, `create`, `retrieve` |
+| `templates` | `list`, `create` |
+| `opt-outs` | `list`, `create`, `delete` |
+| `analytics` | `summary` |
+| `balance` | `retrieve`, `list-transactions` |
 | `webhook-endpoints` | `list`, `create`, `update`, `delete`, `test`, `roll-secret` |
 | `events` | `list`, `retrieve` |
-| `balance` | `retrieve`, `list-transactions` |
-| `analytics` | `retrieve-summary` |
-| `slots` (deprecated) | `list`, `create`, `delete` |
 
 `yesly <resource> <operation> --help` lists every flag with its meaning, and
 [docs/commands](docs/commands/yesly.md) has the same reference as Markdown.
 
 ### Flags and bodies
 
-- Fields inside objects use dots: `--customer.name`, `--slot.start`.
-- Lists take commas or repeated flags: `--channels whatsapp,voice`.
-- Maps take `key=value`, repeated: `--metadata route_id=BIO-07`. In an update,
-  an empty value (`--metadata route_id=`) removes the key.
-- Flags with fixed values (`--status`, `--time-format`, `--enabled-events`…)
+- Fields inside objects use dots: `--limits.daily-spend`, `--template.name`.
+- Lists take commas or repeated flags: `--channels whatsapp,call`.
+- Maps take `key=value`, repeated: `--metadata segment=premium`.
+- Flags with fixed values (`--status`, `--channels`, `--enabled-events`…)
   are checked before sending, and complete in the shell.
-- Lists of objects, such as the appointments of an import, take JSON inline
-  or from a file: `--appointments @appointments.json`.
+- Free-form objects and lists of objects, such as a conversation's
+  `--context` or an agent's `--contact-hours`, take JSON inline or from a
+  file: `--context @context.json`. `--contact` also takes a plain id.
 - `--data` (`-d`) sends a whole JSON body, inline, from a file (`@file`) or
   from stdin (`@-`). Flags given with it override its fields:
 
   ```bash
-  yesly appointments create -d @appointment.json --external-id ORD-48214
+  yesly conversations create -d @conversation.json --channels call
   ```
 
 ### Output
@@ -103,7 +115,7 @@ Answers are printed as the API sends them, as indented JSON on stdout;
 `--compact` prints one line. Errors go to stderr. Pipe to `jq` to pick fields:
 
 ```bash
-yesly appointments list --status no_reply --compact | jq -r '.data[].external_id'
+yesly conversations list --status ended --compact | jq -r '.data[] | [.id, .outcome.code] | @tsv'
 ```
 
 List commands print one page (`--limit` up to 100, `--starting-after` for the
@@ -126,64 +138,65 @@ Network errors, timeouts, 408, 429 and 5xx are retried twice with backoff,
 honouring `Retry-After` (`--max-retries`, `--timeout` per attempt).
 Operations that take an `Idempotency-Key` get a new one per command, reused
 on every retry; pass your own with `--idempotency-key` to make a whole command
-safe to repeat. Creating an appointment is idempotent by `external_id`.
+safe to repeat. Send one with every `conversations create`, derived from your
+own data (`order-8841-delivery`): a repeated command then never contacts
+anyone twice.
 
 ### Any request
 
 `yesly api` sends any method and path, with your key and the same retries:
 
 ```bash
-yesly api GET /appointments -f status=no_reply -F limit=5
-yesly api POST /appointments/apt_…/cancel -f reason="Shop closed"
-yesly api PATCH /locations/bilbao --data @location.json
+yesly api GET /conversations -f status=no_reply -F limit=5
+yesly api POST /conversations/cnv_7Qp4Ns2Xk9Lm3D/cancel
+yesly api PATCH /contacts/ctc_3Kf9Lq2Wm7Rt4B --data @contact.json
 ```
 
 `-f key=value` adds a string and `-F key=value` a typed value (`true`,
 `false`, `null`, numbers, JSON, or `@file`). For GET and DELETE they become
-query parameters; otherwise they go in the body, where `customer.name` or
-`customer[name]` nests and `channels[]` appends.
+query parameters; otherwise they go in the body, where `contact.name` or
+`contact[name]` nests and `channels[]` appends.
 
 ## Integration checklist
 
-The usual integration is two calls: create an appointment as soon as it is
-booked, and handle the customer's answer on a webhook. These are the points an
-integration most often gets wrong; check them before going live. The whole API
-reference is also in Markdown, for agents and other tools:
-[llms-full.txt](https://yesly.dev/llms-full.txt) (index in
+The usual integration is two calls: ask an agent to contact someone (create a
+conversation), and receive the outcome on a webhook (`conversation.ended`).
+These are the points an integration most often gets wrong; check them before
+going live. The whole API reference is also in Markdown, for agents and other
+tools: [llms-full.txt](https://yesly.dev/llms-full.txt) (index in
 [llms.txt](https://yesly.dev/llms.txt), OpenAPI in
 [openapi.yaml](https://yesly.dev/openapi.yaml)).
 
-1. **Set up the appointment types first** (`yesly appointment-types create`,
-   or in the dashboard). A type sets how the time reads (`time_format`:
-   `window`, "between 9:00 and 11:00", or `exact`, "at 17:30"), when the first
-   message goes out (`first_contact`) and how far the customer may move it
-   (`reschedule`). With a `window` type, `slot.end` is required
-   (`slot_end_required`). Send `type` with every appointment when the account
-   has more than one type.
-2. **Use your own id as `external_id`**: the order, booking or visit number.
-   Creating is idempotent by it, so sending the same appointment again returns
-   the existing one, and the same id with different data is a `409`
-   `external_id_conflict`. To change the time or the customer, update the
-   appointment (`yesly appointments update`) instead of creating a new one.
-3. **Send times with an offset** (`2026-11-13T09:00:00+01:00`) and phones in
-   E.164. Yesly contacts Spanish numbers only, and no premium or special-rate
-   ones (`phone_not_allowed`).
-4. **Handle the answer on a webhook.** Verify the signature over the raw body,
-   answer `2xx` within 10 seconds before doing slow work, and skip event ids
-   you have already handled: a delivery can arrive more than once. The
-   outcomes are `appointment.confirmed`, `appointment.cancelled`,
-   `appointment.rescheduled`, `appointment.reschedule_requested` and
-   `appointment.no_reply`; each carries your `external_id` and `metadata`.
-5. **Build and test with a `ysk_test_` key.** The test phone numbers choose
-   the outcome (`+34600000001` confirms on WhatsApp, `+34600000009` never
-   answers; the full table is in the reference) and the chain runs in seconds.
-   A real number with a test key is refused (`test_number_required`).
-6. **Retry only what can succeed.** The CLI already retries network errors,
+1. **Read your agent first** (`yesly agents retrieve agt_…`). It declares the
+   `outcomes` it can end with and the `context` it expects; a context that
+   does not fit is a `422` `context_invalid` with the field in `param`.
+2. **Use your own id as the contact's `external_id`.** Contacts are matched
+   only by exact identifiers (`external_id`, then a phone, then an email), and
+   `contacts create` adds what is new to the one it finds. An identifier that
+   belongs to another contact is a `409` `contact_identifier_taken`: merge the
+   two first (`yesly contacts merge`).
+3. **Send an `--idempotency-key` with every new conversation**, derived from
+   your own data, so a repeated command never contacts anyone twice.
+4. **Send times with an offset** (`2026-12-01T10:00:00+01:00`) and phones in
+   E.164. Live contacts must be in Spain, and not premium or special-rate
+   numbers (`phone_not_allowed`).
+5. **Handle the outcome on a webhook.** Verify the signature over the raw
+   body, answer `2xx` within 10 seconds before doing slow work, and skip event
+   ids you have already handled: a delivery can arrive more than once.
+   `conversation.ended` carries the conversation with its `outcome`
+   (`{ "code", "data" }`); `conversation.no_reply`, `conversation.cancelled`
+   and `conversation.failed` close the others.
+6. **Build and test with a `ysk_test_` key.** The test phone numbers choose
+   what happens (`+34600000001` answers and the agent ends with its first
+   outcome, `+34600000009` never answers; the full table is in the reference)
+   and waits last seconds.
+7. **Retry only what can succeed.** The CLI already retries network errors,
    `408`, `429` and `5xx`, with the same idempotency key. A `4xx` fails the
    same way again: fix the request using the error's `code` and `param`.
-7. **Keep keys on the server.** A read-only key can list and retrieve but not
-   write (`api_key_read_only`). With a `ysk_live_` key, commands that change
-   data also need `--live`.
+8. **Keep keys on the server.** A read-only key can list and retrieve but not
+   write (`api_key_read_only`); a key limited to one agent gets `403`
+   `api_key_agent_scope` on any other. With a `ysk_live_` key, commands that
+   change data also need `--live`.
 
 ## Webhooks
 
@@ -201,7 +214,7 @@ Without `--forward-to`, events are printed as JSON lines. `--events` keeps
 only some types:
 
 ```bash
-yesly listen --events appointment.confirmed,appointment.no_reply
+yesly listen --events conversation.ended,conversation.no_reply
 ```
 
 Events arrive with up to `--interval` (2 s) of delay. `listen` creates no
@@ -216,8 +229,18 @@ yesly webhooks event-types
 ```
 
 `verify` exits with 0 when the signature matches and the timestamp is within
-five minutes (`--tolerance`), and 1 otherwise. To send a test delivery from
-Yesly itself, use `yesly webhook-endpoints test we_… --type appointment.confirmed`.
+five minutes (`--tolerance`), and 1 otherwise. For example, to check a
+`conversation.ended` delivery your handler saved, with the raw body in
+`event.json` and the `Yesly-Signature` header it came with:
+
+```bash
+yesly webhooks verify --secret "$YESLY_WEBHOOK_SECRET" \
+  --header "$(cat signature.txt)" --payload @event.json \
+  && jq '.data.conversation | {id, outcome}' event.json
+```
+
+To send a test delivery from Yesly itself, use
+`yesly webhook-endpoints test we_… --type conversation.ended`.
 
 ## Shell completion
 

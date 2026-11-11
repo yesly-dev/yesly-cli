@@ -41,7 +41,7 @@ arrive with up to --interval of delay, from the moment listen starts. This
 does not create a webhook endpoint, and real endpoints keep receiving events.`,
 		Example: `  yesly listen
   yesly listen --forward-to http://localhost:3000/yesly/webhook
-  yesly listen --events appointment.confirmed,appointment.no_reply`,
+  yesly listen --events conversation.ended,conversation.no_reply`,
 		Args: noArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			if err := checkEnum(spec.Field{Name: "events", Enum: spec.EventTypes}, types...); err != nil {

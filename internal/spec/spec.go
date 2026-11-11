@@ -23,7 +23,7 @@ const (
 )
 
 // Field is one flag: a query parameter or a body property. Body properties
-// inside objects use dotted names, such as customer.name.
+// inside objects use dotted names, such as contact.name.
 type Field struct {
 	Name        string
 	Kind        Kind

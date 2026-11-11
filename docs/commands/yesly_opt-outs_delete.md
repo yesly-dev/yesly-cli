@@ -1,37 +1,39 @@
-## yesly appointment-types list
+## yesly opt-outs delete
 
-List appointment types
+Delete an opt-out
 
 ### Synopsis
 
-List appointment types.
+Delete an opt-out.
 
-Lists the account's appointment types.
+Only when the person asked to be contacted again. `contact.opted_in` fires.
 
-API: GET /appointment_types
+API: DELETE /opt_outs/{id}
+
+Arguments:
+  <id>  Id of the opt-out, prefixed opt_.
 
 ```
-yesly appointment-types list [flags]
+yesly opt-outs delete <id> [flags]
 ```
 
 ### Examples
 
 ```
-  yesly appointment-types list
+  yesly opt-outs delete opt_…
 ```
 
 ### Options
 
 ```
-      --all    follow every page and print all items as one JSON array
-  -h, --help   help for list
+  -h, --help   help for delete
 ```
 
 ### Options inherited from parent commands
 
 ```
       --api-key string       API key; overrides YESLY_API_KEY and the profile
-      --api-version string   Yesly-Version header (default "2026-10-01")
+      --api-version string   Yesly-Version header (default "2026-11-11")
       --base-url string      API base URL; overrides YESLY_BASE_URL and the profile (default https://api.yesly.dev/v1)
       --compact              print JSON on one line
       --dry-run              print the request instead of sending it
@@ -43,5 +45,5 @@ yesly appointment-types list [flags]
 
 ### SEE ALSO
 
-* [yesly appointment-types](yesly_appointment-types.md)	 - What each appointment is, how its time is shown and the instructions in the message
+* [yesly opt-outs](yesly_opt-outs.md)	 - Addresses that receive nothing more on a channel
 

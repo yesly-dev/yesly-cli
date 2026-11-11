@@ -116,51 +116,66 @@ func TestEveryOperationIsACommandWithAnExample(t *testing.T) {
 func TestCreateBuildsTheBodyFromFlagsAndData(t *testing.T) {
 	setup(t)
 	api := newFakeAPI(t)
-	r := run(t, "", "appointments", "create", "--api-key", "ysk_test_x", "--base-url", api.URL,
-		"--data", `{"type":"delivery","customer":{"email":"m@example.com","name":"Old"}}`,
-		"--external-id", "ORD-1", "--customer.name", "Martha", "--customer.phone", "+34600000001",
-		"--slot.start", "2026-11-13T09:00:00+01:00", "--channels", "whatsapp,voice",
-		"--metadata", "order_id=PV-1", "--metadata", "route_id=BIO-07")
+	r := run(t, "", "conversations", "create", "--api-key", "ysk_test_x", "--base-url", api.URL,
+		"--data", `{"agent":"agt_old","start_at":"2026-12-01T10:00:00+01:00"}`,
+		"--agent", "agt_8Hd2kQ4mZ1LpXy", "--contact", `{"external_id":"customer-3391","phone":"+34600000001","name":"Marta"}`,
+		"--channels", "whatsapp,call", "--context", `{"order":"8841","delivery_window":"2026-12-02T09:00/13:00"}`)
 	if r.code != 0 {
 		t.Fatalf("exit %d: %s", r.code, r.err)
 	}
 	c := api.last(t)
-	if c.Method != "POST" || c.Path != "/appointments" {
+	if c.Method != "POST" || c.Path != "/conversations" {
 		t.Fatalf("%s %s", c.Method, c.Path)
 	}
 	var got map[string]any
 	_ = json.Unmarshal([]byte(c.Body), &got)
 	want := map[string]any{
-		"type":        "delivery",
-		"external_id": "ORD-1",
-		"customer":    map[string]any{"email": "m@example.com", "name": "Martha", "phone": "+34600000001"},
-		"slot":        map[string]any{"start": "2026-11-13T09:00:00+01:00"},
-		"channels":    []any{"whatsapp", "voice"},
-		"metadata":    map[string]any{"order_id": "PV-1", "route_id": "BIO-07"},
+		"agent":    "agt_8Hd2kQ4mZ1LpXy",
+		"contact":  map[string]any{"external_id": "customer-3391", "name": "Marta", "phone": "+34600000001"},
+		"channels": []any{"whatsapp", "call"},
+		"start_at": "2026-12-01T10:00:00+01:00",
+		"context":  map[string]any{"delivery_window": "2026-12-02T09:00/13:00", "order": "8841"},
 	}
 	wantJSON, _ := json.Marshal(want)
 	gotJSON, _ := json.Marshal(got)
 	if string(wantJSON) != string(gotJSON) {
 		t.Fatalf("body = %s\nwant %s", gotJSON, wantJSON)
 	}
-	if c.Header.Get("Idempotency-Key") != "" {
-		t.Fatal("create is idempotent by external_id and sends no Idempotency-Key")
+	if len(c.Header.Get("Idempotency-Key")) != 36 {
+		t.Fatal("creating a conversation should send an Idempotency-Key")
 	}
 	if r.out != "{\n  \"object\": \"ok\"\n}\n" {
 		t.Fatalf("output = %q", r.out)
 	}
 }
 
+func TestJSONFlagTakesAPlainID(t *testing.T) {
+	setup(t)
+	api := newFakeAPI(t)
+	r := run(t, "", "messages", "create", "--api-key", "ysk_test_x", "--base-url", api.URL,
+		"--agent", "agt_8Hd2kQ4mZ1LpXy", "--contact", "ctc_3Kf9Lq2Wm7Rt4B", "--channel", "sms", "--text", "Hola")
+	if r.code != 0 {
+		t.Fatalf("exit %d: %s", r.code, r.err)
+	}
+	if b := api.last(t).Body; b != `{"agent":"agt_8Hd2kQ4mZ1LpXy","channel":"sms","contact":"ctc_3Kf9Lq2Wm7Rt4B","text":"Hola"}` {
+		t.Fatalf("body = %s", b)
+	}
+	if r := run(t, "", "messages", "create", "--api-key", "ysk_test_x", "--dry-run",
+		"--agent", "agt_1", "--contact", `{"phone":`, "--channel", "sms"); r.code != 2 {
+		t.Fatalf("broken JSON object: exit %d", r.code)
+	}
+}
+
 func TestTypedFlags(t *testing.T) {
 	setup(t)
 	api := newFakeAPI(t)
-	r := run(t, "", "appointment-types", "update", "delivery", "--api-key", "ysk_test_x", "--base-url", api.URL,
-		"--reschedule.window-days", "21", "--reschedulable=false")
+	r := run(t, "", "agents", "update", "agt_8Hd2kQ4mZ1LpXy", "--api-key", "ysk_test_x", "--base-url", api.URL,
+		"--limits.messages-per-conversation", "21", "--recording.enabled=false")
 	if r.code != 0 {
 		t.Fatalf("exit %d: %s", r.code, r.err)
 	}
 	c := api.last(t)
-	if c.Method != "PATCH" || c.Path != "/appointment_types/delivery" || c.Body != `{"reschedulable":false,"reschedule":{"window_days":21}}` {
+	if c.Method != "PATCH" || c.Path != "/agents/agt_8Hd2kQ4mZ1LpXy" || c.Body != `{"limits":{"messages_per_conversation":21},"recording":{"enabled":false}}` {
 		t.Fatalf("%s %s %s", c.Method, c.Path, c.Body)
 	}
 }
@@ -176,7 +191,7 @@ func TestPostWithoutBodyFlagsSendsAnEmptyObjectAndAnIdempotencyKey(t *testing.T)
 	if c.Path != "/webhook_endpoints/we_1/roll_secret" || c.Body != "{}" || len(c.Header.Get("Idempotency-Key")) != 36 {
 		t.Fatalf("%+v", c)
 	}
-	run(t, "", "appointments", "cancel", "apt_1", "--api-key", "ysk_test_x", "--base-url", api.URL, "--idempotency-key", "mine")
+	run(t, "", "conversations", "cancel", "cnv_1", "--api-key", "ysk_test_x", "--base-url", api.URL, "--idempotency-key", "mine")
 	if got := api.last(t).Header.Get("Idempotency-Key"); got != "mine" {
 		t.Fatalf("Idempotency-Key = %q", got)
 	}
@@ -185,12 +200,12 @@ func TestPostWithoutBodyFlagsSendsAnEmptyObjectAndAnIdempotencyKey(t *testing.T)
 func TestQueryFlags(t *testing.T) {
 	setup(t)
 	api := newFakeAPI(t)
-	r := run(t, "", "appointments", "list", "--api-key", "ysk_test_x", "--base-url", api.URL,
-		"--status", "no_reply", "--metadata", "route_id=BIO-07", "--limit", "5")
+	r := run(t, "", "conversations", "list", "--api-key", "ysk_test_x", "--base-url", api.URL,
+		"--status", "no_reply", "--agent", "agt_8Hd2kQ4mZ1LpXy", "--limit", "5")
 	if r.code != 0 {
 		t.Fatalf("exit %d: %s", r.code, r.err)
 	}
-	if q := api.last(t).Query; q != "limit=5&metadata%5Broute_id%5D=BIO-07&status=no_reply" {
+	if q := api.last(t).Query; q != "agent=agt_8Hd2kQ4mZ1LpXy&limit=5&status=no_reply" {
 		t.Fatalf("query = %s", q)
 	}
 }
@@ -198,8 +213,8 @@ func TestQueryFlags(t *testing.T) {
 func TestPathArgumentsAreEscaped(t *testing.T) {
 	setup(t)
 	api := newFakeAPI(t)
-	run(t, "", "locations", "update", "a/b", "--api-key", "ysk_test_x", "--base-url", api.URL, "--name", "X")
-	if p := api.last(t); !strings.HasSuffix(p.Path, "/locations/a/b") {
+	run(t, "", "contacts", "update", "a/b", "--api-key", "ysk_test_x", "--base-url", api.URL, "--name", "X")
+	if p := api.last(t); !strings.HasSuffix(p.Path, "/contacts/a/b") {
 		// Go decodes %2F in URL.Path; the raw request keeps it escaped.
 		t.Fatalf("path = %s", p.Path)
 	}
@@ -230,14 +245,14 @@ func TestListAll(t *testing.T) {
 func TestLiveKeysNeedLiveToChangeData(t *testing.T) {
 	setup(t)
 	api := newFakeAPI(t)
-	r := run(t, "", "appointments", "cancel", "apt_1", "--api-key", "ysk_live_x", "--base-url", api.URL)
+	r := run(t, "", "conversations", "cancel", "cnv_1", "--api-key", "ysk_live_x", "--base-url", api.URL)
 	if r.code != 2 || !strings.Contains(r.err, "--live") || len(api.calls) != 0 {
 		t.Fatalf("exit %d, err %q, calls %d", r.code, r.err, len(api.calls))
 	}
-	if r := run(t, "", "appointments", "list", "--api-key", "ysk_live_x", "--base-url", api.URL); r.code != 0 {
+	if r := run(t, "", "conversations", "list", "--api-key", "ysk_live_x", "--base-url", api.URL); r.code != 0 {
 		t.Fatalf("GET with a live key: %s", r.err)
 	}
-	if r := run(t, "", "appointments", "cancel", "apt_1", "--live", "--api-key", "ysk_live_x", "--base-url", api.URL); r.code != 0 {
+	if r := run(t, "", "conversations", "cancel", "cnv_1", "--live", "--api-key", "ysk_live_x", "--base-url", api.URL); r.code != 0 {
 		t.Fatalf("--live: %s", r.err)
 	}
 }
@@ -247,10 +262,10 @@ func TestAPIErrorsExitWithOne(t *testing.T) {
 	api := newFakeAPI(t)
 	api.handler = func(w http.ResponseWriter, _ *http.Request, _ string) {
 		w.WriteHeader(404)
-		_, _ = w.Write([]byte(`{"error":{"type":"invalid_request","code":"resource_missing","message":"No such appointment.","request_id":"req_1"}}`))
+		_, _ = w.Write([]byte(`{"error":{"type":"invalid_request","code":"resource_missing","message":"No such conversation.","request_id":"req_1"}}`))
 	}
-	r := run(t, "", "appointments", "retrieve", "apt_x", "--api-key", "ysk_test_x", "--base-url", api.URL)
-	if r.code != 1 || r.err != "Error: No such appointment. (status 404, type invalid_request, code resource_missing, request req_1)\n" {
+	r := run(t, "", "conversations", "retrieve", "cnv_x", "--api-key", "ysk_test_x", "--base-url", api.URL)
+	if r.code != 1 || r.err != "Error: No such conversation. (status 404, type invalid_request, code resource_missing, request req_1)\n" {
 		t.Fatalf("exit %d, err %q", r.code, r.err)
 	}
 }
@@ -258,13 +273,14 @@ func TestAPIErrorsExitWithOne(t *testing.T) {
 func TestUsageErrorsExitWithTwo(t *testing.T) {
 	setup(t)
 	for _, args := range [][]string{
-		{"appointments", "retrieve"},
-		{"appointments", "list", "extra"},
-		{"appointments", "list", "--status", "nope"},
-		{"appointments", "create", "--nope"},
-		{"appointments", "create", "--data", "[1]"},
-		{"appointments", "create", "--metadata", "novalue"},
-		{"appointments", "list", "--base-url", "http://example.com"},
+		{"conversations", "retrieve"},
+		{"conversations", "list", "extra"},
+		{"conversations", "list", "--status", "nope"},
+		{"conversations", "create", "--nope"},
+		{"conversations", "create", "--data", "[1]"},
+		{"conversations", "create", "--channels", "fax"},
+		{"contacts", "create", "--metadata", "novalue"},
+		{"conversations", "list", "--base-url", "http://example.com"},
 	} {
 		r := run(t, "", append(args, "--api-key", "ysk_test_x", "--dry-run")...)
 		if r.code != 2 {
@@ -275,8 +291,8 @@ func TestUsageErrorsExitWithTwo(t *testing.T) {
 
 func TestDryRunNeedsNoKey(t *testing.T) {
 	setup(t)
-	r := run(t, "", "appointments", "cancel", "apt_1", "--reason", "Closed", "--dry-run", "--idempotency-key", "k")
-	want := "POST https://api.yesly.dev/v1/appointments/apt_1/cancel\nYesly-Version: 2026-10-01\nIdempotency-Key: k\n\n{\n  \"reason\": \"Closed\"\n}\n"
+	r := run(t, "", "opt-outs", "create", "--channel", "sms", "--address", "+34600000001", "--dry-run", "--idempotency-key", "k")
+	want := "POST https://api.yesly.dev/v1/opt_outs\nYesly-Version: 2026-11-11\nIdempotency-Key: k\n\n{\n  \"address\": \"+34600000001\",\n  \"channel\": \"sms\"\n}\n"
 	if r.code != 0 || r.out != want {
 		t.Fatalf("exit %d, out %q, err %q", r.code, r.out, r.err)
 	}
@@ -286,13 +302,13 @@ func TestJSONFlagFromFile(t *testing.T) {
 	setup(t)
 	api := newFakeAPI(t)
 	file := filepath.Join(t.TempDir(), "a.json")
-	_ = os.WriteFile(file, []byte(`[{"external_id":"A"}]`), 0o600)
-	r := run(t, "", "appointments", "import", "--appointments", "@"+file, "--api-key", "ysk_test_x", "--base-url", api.URL)
-	if r.code != 0 || api.last(t).Body != `{"appointments":[{"external_id":"A"}]}` {
+	_ = os.WriteFile(file, []byte(`[{"name":"Lunes","days":[1],"from":"09:00","to":"14:00"}]`), 0o600)
+	r := run(t, "", "agents", "update", "agt_1", "--contact-hours", "@"+file, "--api-key", "ysk_test_x", "--base-url", api.URL)
+	if r.code != 0 || api.last(t).Body != `{"contact_hours":[{"days":[1],"from":"09:00","name":"Lunes","to":"14:00"}]}` {
 		t.Fatalf("exit %d, err %q, body %s", r.code, r.err, api.last(t).Body)
 	}
-	r = run(t, `{"appointments":[]}`, "appointments", "import", "--data", "@-", "--api-key", "ysk_test_x", "--base-url", api.URL)
-	if r.code != 0 || api.last(t).Body != `{"appointments":[]}` {
+	r = run(t, `{"name":"Marta"}`, "contacts", "update", "ctc_1", "--data", "@-", "--api-key", "ysk_test_x", "--base-url", api.URL)
+	if r.code != 0 || api.last(t).Body != `{"name":"Marta"}` {
 		t.Fatalf("stdin: exit %d, body %s", r.code, api.last(t).Body)
 	}
 }
@@ -300,9 +316,9 @@ func TestJSONFlagFromFile(t *testing.T) {
 func TestAPICommand(t *testing.T) {
 	setup(t)
 	api := newFakeAPI(t)
-	r := run(t, "", "api", "post", "appointments", "--api-key", "ysk_test_x", "--base-url", api.URL,
-		"-f", "external_id=ORD-1", "-f", "customer.name=Martha", "-f", "customer[phone]=+34600000001",
-		"-f", "channels[]=sms", "-f", "channels[]=voice", "-F", "metadata={\"a\":\"b\"}")
+	r := run(t, "", "api", "post", "conversations", "--api-key", "ysk_test_x", "--base-url", api.URL,
+		"-f", "agent=agt_1", "-f", "contact.name=Marta", "-f", "contact[phone]=+34600000001",
+		"-f", "channels[]=sms", "-f", "channels[]=call", "-F", "context={\"order\":\"8841\"}")
 	if r.code != 0 {
 		t.Fatalf("exit %d: %s", r.code, r.err)
 	}
@@ -310,19 +326,23 @@ func TestAPICommand(t *testing.T) {
 	var got map[string]any
 	_ = json.Unmarshal([]byte(c.Body), &got)
 	gotJSON, _ := json.Marshal(got)
-	if string(gotJSON) != `{"channels":["sms","voice"],"customer":{"name":"Martha","phone":"+34600000001"},"external_id":"ORD-1","metadata":{"a":"b"}}` {
+	if string(gotJSON) != `{"agent":"agt_1","channels":["sms","call"],"contact":{"name":"Marta","phone":"+34600000001"},"context":{"order":"8841"}}` {
 		t.Fatalf("body = %s", gotJSON)
 	}
-	if c.Header.Get("Idempotency-Key") != "" {
-		t.Fatal("POST /appointments takes no Idempotency-Key")
+	if c.Header.Get("Idempotency-Key") == "" {
+		t.Fatal("POST /conversations should get an Idempotency-Key")
 	}
 
-	run(t, "", "api", "POST", "/appointments/apt_1/cancel", "--api-key", "ysk_test_x", "--base-url", api.URL)
+	run(t, "", "api", "POST", "/conversations/cnv_1/cancel", "--api-key", "ysk_test_x", "--base-url", api.URL)
 	if api.last(t).Header.Get("Idempotency-Key") == "" {
 		t.Fatal("cancel should get an Idempotency-Key")
 	}
+	run(t, "", "api", "POST", "/not_an_operation", "--api-key", "ysk_test_x", "--base-url", api.URL)
+	if api.last(t).Header.Get("Idempotency-Key") != "" {
+		t.Fatal("a POST that is not an idempotent operation takes no Idempotency-Key")
+	}
 
-	run(t, "", "api", "GET", "/appointments?status=no_reply", "-F", "limit=5", "-f", "metadata[route_id]=BIO", "--api-key", "ysk_test_x", "--base-url", api.URL)
+	run(t, "", "api", "GET", "/conversations?status=no_reply", "-F", "limit=5", "-f", "metadata[route_id]=BIO", "--api-key", "ysk_test_x", "--base-url", api.URL)
 	if q := api.last(t).Query; q != "limit=5&metadata%5Broute_id%5D=BIO&status=no_reply" {
 		t.Fatalf("query = %s", q)
 	}
@@ -392,9 +412,9 @@ func TestLoginRejectsBadKeys(t *testing.T) {
 
 func TestWebhooksSignAndVerify(t *testing.T) {
 	setup(t)
-	body := `{"id":"evt_1","object":"event","type":"appointment.confirmed","data":{"appointment":{"id":"apt_1","external_id":"ORD-48213"}}}`
+	body := `{"id":"evt_1","object":"event","type":"conversation.ended","data":{"conversation":{"id":"cnv_7Qp4Ns2Xk9Lm3D","outcome":{"code":"rescheduled","data":{"delivery_window":"2026-12-03T09:00/13:00"}}}}}`
 	r := run(t, body, "webhooks", "sign", "--secret", "whsec_test")
-	want := "t=1794474252,v1=62b8ce65d20d98e1d1d8f14ff76317b0bf9b166a3dc5c2d980022e54c62e0a67\n"
+	want := "t=1794474252,v1=f60bd9a59d63d6f2d01cbdcd9aec4781af68e4d1e915aaff424817ce69921f83\n"
 	if r.code != 0 || r.out != want {
 		t.Fatalf("sign: exit %d, out %q, err %q", r.code, r.out, r.err)
 	}
@@ -424,20 +444,20 @@ func TestListenForwardsNewEventsSigned(t *testing.T) {
 	polls := 0
 	api.handler = func(w http.ResponseWriter, r *http.Request, _ string) {
 		polls++
-		old := `{"id":"evt_old","type":"appointment.created","created":"2026-11-08T10:00:00Z"}`
+		old := `{"id":"evt_old","type":"conversation.created","created":"2026-11-08T10:00:00Z"}`
 		if polls == 1 {
 			_, _ = w.Write([]byte(`{"data":[` + old + `],"has_more":false}`))
 			return
 		}
 		_, _ = w.Write([]byte(`{"data":[{"id":"evt_new2","type":"message.sent","created":"2026-11-08T10:00:02Z"},` +
-			`{"id":"evt_new1","type":"appointment.confirmed","created":"2026-11-08T10:00:01Z"},` + old + `],"has_more":false}`))
+			`{"id":"evt_new1","type":"conversation.ended","created":"2026-11-08T10:00:01Z"},` + old + `],"has_more":false}`))
 	}
 
 	var errb bytes.Buffer
 	app := &App{In: strings.NewReader(""), Out: io.Discard, Err: &errb, Now: time.Now, Sleep: func(time.Duration) {}}
 	root := NewRoot(app)
 	root.SetArgs([]string{"listen", "--api-key", "ysk_test_x", "--base-url", api.URL, "--forward-to", local.URL,
-		"--secret", "whsec_local", "--interval", "10ms", "--events", "appointment.confirmed"})
+		"--secret", "whsec_local", "--interval", "10ms", "--events", "conversation.ended"})
 	ctx, cancel := context.WithCancel(context.Background())
 	done := make(chan error)
 	go func() { done <- root.ExecuteContext(ctx) }()

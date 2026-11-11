@@ -1,47 +1,44 @@
-## yesly appointments cancel
+## yesly contacts merge
 
-Cancel an appointment
+Merge contacts
 
 ### Synopsis
 
-Cancel an appointment.
+Merge contacts.
 
-Cancels an appointment from your side, for example when the order is
-cancelled. Yesly stops contacting the customer at once and does not send
-them anything else. Attempts already made are still charged. Fires
-`appointment.cancelled`.
+The contact in the body joins this one: its identifiers, conversations and memory move here, and it goes away. `contact.merged` fires. When both have an `external_id`, this one's stays.
 
-API: POST /appointments/{id}/cancel
+API: POST /contacts/{id}/merge
 
 Arguments:
-  <id>  Id of the appointment, prefixed apt_.
+  <id>  Id of the contact, prefixed ctc_.
 
 Flags set the body's fields; --data sends a whole JSON body, and flags given with it override its fields.
 
 ```
-yesly appointments cancel <id> [flags]
+yesly contacts merge <id> [flags]
 ```
 
 ### Examples
 
 ```
-  yesly appointments cancel apt_… --reason "Shop closed"
+  yesly contacts merge ctc_3Kf9Lq2Wm7Rt4B --contact ctc_…
 ```
 
 ### Options
 
 ```
+      --contact string           (required) Id of the contact that joins this one and goes away.
   -d, --data string              JSON body, inline or @file (@- for stdin)
-  -h, --help                     help for cancel
+  -h, --help                     help for merge
       --idempotency-key string   Idempotency-Key header (default: a new UUID, reused on retries)
-      --reason string            Optional. Stored in cancellation.reason and shown in the dashboard.
 ```
 
 ### Options inherited from parent commands
 
 ```
       --api-key string       API key; overrides YESLY_API_KEY and the profile
-      --api-version string   Yesly-Version header (default "2026-10-01")
+      --api-version string   Yesly-Version header (default "2026-11-11")
       --base-url string      API base URL; overrides YESLY_BASE_URL and the profile (default https://api.yesly.dev/v1)
       --compact              print JSON on one line
       --dry-run              print the request instead of sending it
@@ -53,5 +50,5 @@ yesly appointments cancel <id> [flags]
 
 ### SEE ALSO
 
-* [yesly appointments](yesly_appointments.md)	 - Visits, deliveries or meetings Yesly confirms with your customers
+* [yesly contacts](yesly_contacts.md)	 - Your customers, their identifiers, and what your agents remember about them
 

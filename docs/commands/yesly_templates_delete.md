@@ -1,22 +1,39 @@
-## yesly imports
+## yesly templates delete
 
-Results of appointment imports
+Delete a template
+
+### Synopsis
+
+Delete a template.
+
+Deletes it at Meta (through Telnyx) and here. Keys that can write, and owners and admins in the dashboard.
+
+API: DELETE /templates/{id}
+
+Arguments:
+  <id>  Id of the template, prefixed tpl_.
 
 ```
-yesly imports [flags]
+yesly templates delete <id> [flags]
+```
+
+### Examples
+
+```
+  yesly templates delete tpl_5Rk2Wd8Mq3Lx7B
 ```
 
 ### Options
 
 ```
-  -h, --help   help for imports
+  -h, --help   help for delete
 ```
 
 ### Options inherited from parent commands
 
 ```
       --api-key string       API key; overrides YESLY_API_KEY and the profile
-      --api-version string   Yesly-Version header (default "2026-10-01")
+      --api-version string   Yesly-Version header (default "2026-11-11")
       --base-url string      API base URL; overrides YESLY_BASE_URL and the profile (default https://api.yesly.dev/v1)
       --compact              print JSON on one line
       --dry-run              print the request instead of sending it
@@ -28,6 +45,5 @@ yesly imports [flags]
 
 ### SEE ALSO
 
-* [yesly](yesly.md)	 - Work with the Yesly API from your terminal
-* [yesly imports retrieve](yesly_imports_retrieve.md)	 - Retrieve an import
+* [yesly templates](yesly_templates.md)	 - WhatsApp templates, needed to write outside the 24-hour window
 

@@ -17,14 +17,16 @@ yesly events list [flags]
 ### Examples
 
 ```
-  yesly events list --type 'appointment.*' --from 2026-11-07T00:00:00Z
+  yesly events list --type conversation.ended --from 2026-12-01T00:00:00+01:00
+  yesly events list --conversation cnv_7Qp4Ns2Xk9Lm3D
 ```
 
 ### Options
 
 ```
       --all                     follow every page and print all items as one JSON array
-      --appointment string      Only events about this appointment.
+      --contact string          Only events about this contact and its opt-outs.
+      --conversation string     Only events about this conversation and its messages.
       --from string             Events created on or after this time. A day alone means 00:00 UTC.
   -h, --help                    help for list
       --limit int               Between 1 and 100. Default 20.
@@ -36,7 +38,7 @@ yesly events list [flags]
 
 ```
       --api-key string       API key; overrides YESLY_API_KEY and the profile
-      --api-version string   Yesly-Version header (default "2026-10-01")
+      --api-version string   Yesly-Version header (default "2026-11-11")
       --base-url string      API base URL; overrides YESLY_BASE_URL and the profile (default https://api.yesly.dev/v1)
       --compact              print JSON on one line
       --dry-run              print the request instead of sending it

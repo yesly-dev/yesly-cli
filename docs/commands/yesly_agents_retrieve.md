@@ -1,26 +1,37 @@
-## yesly slots
+## yesly agents retrieve
 
-(deprecated) Free times published in Yesly
+Retrieve an agent
 
 ### Synopsis
 
-Deprecated. Free times published in Yesly. Day changes now come from your own system (live availability) or the customer's proposal; these operations keep working for accounts that use them.
+Retrieve an agent.
+
+API: GET /agents/{id}
+
+Arguments:
+  <id>  Id of the agent, prefixed agt_.
 
 ```
-yesly slots [flags]
+yesly agents retrieve <id> [flags]
+```
+
+### Examples
+
+```
+  yesly agents retrieve agt_8Hd2kQ4mZ1LpXy
 ```
 
 ### Options
 
 ```
-  -h, --help   help for slots
+  -h, --help   help for retrieve
 ```
 
 ### Options inherited from parent commands
 
 ```
       --api-key string       API key; overrides YESLY_API_KEY and the profile
-      --api-version string   Yesly-Version header (default "2026-10-01")
+      --api-version string   Yesly-Version header (default "2026-11-11")
       --base-url string      API base URL; overrides YESLY_BASE_URL and the profile (default https://api.yesly.dev/v1)
       --compact              print JSON on one line
       --dry-run              print the request instead of sending it
@@ -32,8 +43,5 @@ yesly slots [flags]
 
 ### SEE ALSO
 
-* [yesly](yesly.md)	 - Work with the Yesly API from your terminal
-* [yesly slots create](yesly_slots_create.md)	 - (deprecated) Publish slots
-* [yesly slots delete](yesly_slots_delete.md)	 - (deprecated) Delete a slot
-* [yesly slots list](yesly_slots_list.md)	 - (deprecated) List slots
+* [yesly agents](yesly_agents.md)	 - The assistants Yesly built for you, and the settings you control
 

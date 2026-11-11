@@ -6,20 +6,9 @@ Retrieve the balance
 
 Retrieve the balance.
 
-Yesly is prepaid. Each WhatsApp message, SMS, email and started minute
-of a call that was picked up is taken from the balance at the public
-price; calls nobody picks up are free. A message that could not be sent
-is refunded with an `adjustment`. When a customer asks for another day
-on a call, the link to pick a day goes by WhatsApp (or by SMS when
-WhatsApp cannot be used) and is charged as a message of that channel.
-Top-ups are made by card in the dashboard and cannot be made through
-the API.
+Yesly is prepaid. Each SMS, WhatsApp message and email, and each started minute of a call that was picked up, is taken from the balance at your account's prices; calls nobody picks up are free. A message that could not be sent is refunded with an `adjustment`. A live call holds its longest cost (the agent's `max_call_minutes`) until it ends. Top-ups are made by card in the dashboard and cannot be made through the API.
 
-If the balance does not cover the next message, contact for that
-appointment stops: it stays `in_progress` and is not resumed after a
-top-up. Appointments can still be created. Keep a balance that covers
-your usage, and watch `balance.low`. Test mode always returns a
-balance of 0 and never blocks.
+When the balance does not cover the next message, it is refused (`402`, or the conversation ends `failed`). Watch `balance.low`. Test mode always returns a balance of 0 and never blocks.
 
 API: GET /balance
 
@@ -43,7 +32,7 @@ yesly balance retrieve [flags]
 
 ```
       --api-key string       API key; overrides YESLY_API_KEY and the profile
-      --api-version string   Yesly-Version header (default "2026-10-01")
+      --api-version string   Yesly-Version header (default "2026-11-11")
       --base-url string      API base URL; overrides YESLY_BASE_URL and the profile (default https://api.yesly.dev/v1)
       --compact              print JSON on one line
       --dry-run              print the request instead of sending it

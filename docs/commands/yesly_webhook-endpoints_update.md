@@ -6,8 +6,6 @@ Update an endpoint
 
 Update an endpoint.
 
-Changes an endpoint. Send only what changes.
-
 API: PATCH /webhook_endpoints/{id}
 
 Arguments:
@@ -31,7 +29,7 @@ yesly webhook-endpoints update <id> [flags]
   -d, --data string              JSON body, inline or @file (@- for stdin)
       --description string       New note.
       --disabled                 true stops sending events to it and drops its pending retries. false enables it again and resets its count of failed deliveries.
-      --enabled-events strings   Replaces the list of event types. One of: appointment.created, appointment.confirmed, appointment.rescheduled, appointment.reschedule_requested, appointment.cancelled, appointment.no_reply, message.sent, message.delivered, message.failed, call.started, call.completed, call.transferred, balance.low, balance.topped_up, *.
+      --enabled-events strings   Replaces the list of event types. One of: conversation.created, conversation.started, conversation.transferred, conversation.ended, conversation.no_reply, conversation.cancelled, conversation.failed, message.sent, message.delivered, message.failed, message.received, contact.created, contact.updated, contact.merged, contact.erased, contact.opted_out, contact.opted_in, agent.deployed, balance.low, balance.topped_up, *.
   -h, --help                     help for update
       --url string               New URL.
 ```
@@ -40,7 +38,7 @@ yesly webhook-endpoints update <id> [flags]
 
 ```
       --api-key string       API key; overrides YESLY_API_KEY and the profile
-      --api-version string   Yesly-Version header (default "2026-10-01")
+      --api-version string   Yesly-Version header (default "2026-11-11")
       --base-url string      API base URL; overrides YESLY_BASE_URL and the profile (default https://api.yesly.dev/v1)
       --compact              print JSON on one line
       --dry-run              print the request instead of sending it
