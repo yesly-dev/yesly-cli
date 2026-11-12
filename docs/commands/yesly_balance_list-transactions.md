@@ -6,7 +6,7 @@ List balance transactions
 
 List balance transactions.
 
-Every charge, top-up and adjustment, newest first. Charges point to the agent, the conversation and the message, so you can pass the cost on to an order or a customer.
+Every charge and adjustment of your account, newest first. Charges point to the agent, the conversation and the message, so you can pass the cost on to an order or a customer. Top-ups belong to the organization and are listed in the dashboard, with every account's charges.
 
 API: GET /balance/transactions
 
@@ -50,5 +50,5 @@ yesly balance list-transactions [flags]
 
 ### SEE ALSO
 
-* [yesly balance](yesly_balance.md)	 - The prepaid balance and every charge and top-up
+* [yesly balance](yesly_balance.md)	 - The prepaid balance of your organization, shared by all its accounts, and every charge and top-up
 

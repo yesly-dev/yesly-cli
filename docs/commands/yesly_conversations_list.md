@@ -6,7 +6,7 @@ List conversations
 
 List conversations.
 
-Newest first, by creation.
+Newest first by creation, or oldest first with `order=asc`.
 
 API: GET /conversations
 
@@ -32,6 +32,7 @@ yesly conversations list [flags]
       --from string             Created on or after this day or time. A day starts at 00:00 in your account's time zone.
   -h, --help                    help for list
       --limit int               Between 1 and 100. Default 20.
+      --order string            desc (default) lists the newest first; asc the oldest. starting_after continues in the same order. One of: desc, asc.
       --outcome string          Only conversations that ended with this outcome code.
       --starting-after string   Cursor: the id of the last item of the previous page.
       --status string           Only in this status. One of: scheduled, in_progress, ended, no_reply, cancelled, failed.

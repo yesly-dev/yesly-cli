@@ -6,7 +6,7 @@ Update an agent's settings
 
 Update an agent's settings.
 
-Changes the settings you own: voice, limits, contact hours, recording, the disclosure sentence and the transfer targets. The agent's code, models, outcomes and context are Yesly's: ask for a new version. Accounts with EU data residency cannot choose a voice that is processed outside the EU (`voice_not_in_eu`).
+Changes the settings you own: voice, email profile, limits, contact hours, recording, the disclosure sentence and the transfer targets. The agent's code, models, outcomes and context are Yesly's: ask for a new version. Accounts with EU data residency cannot choose a voice that is processed outside the EU (`voice_not_in_eu`).
 
 API: PATCH /agents/{id}
 
@@ -32,6 +32,7 @@ yesly agents update <id> [flags]
       --contact-hours string                   The agent's own contact hours, or null to use the account's. JSON, inline or @file; a plain word, such as an id, is sent as a string.
   -d, --data string                            JSON body, inline or @file (@- for stdin)
       --disclosure string                      Cannot be empty (disclosure_required).
+      --email-profile string                   One of the company's email profiles, or null for Yesly's sender.
   -h, --help                                   help for update
       --limits.daily-spend float               
       --limits.max-call-minutes int            

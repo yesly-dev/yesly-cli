@@ -36,7 +36,17 @@ var examples = map[string]string{
 	"conversations.cancel":        `  yesly conversations cancel cnv_7Qp4Ns2Xk9Lm3D`,
 	"conversations.list_messages": `  yesly conversations list-messages cnv_7Qp4Ns2Xk9Lm3D`,
 	"conversations.recording":     `  yesly conversations recording cnv_7Qp4Ns2Xk9Lm3D --message msg_…`,
-	"messages.list":               `  yesly messages list --conversation cnv_7Qp4Ns2Xk9Lm3D`,
+	"campaigns.create": `  yesly campaigns create --name "Delivery confirmations December" --agent agt_8Hd2kQ4mZ1LpXy \
+    --channels whatsapp,call --start-at 2026-12-01T10:00:00+01:00 --rate 5 \
+    --recipients @recipients.json --idempotency-key december-deliveries
+  yesly campaigns create --data @campaign.json`,
+	"campaigns.list":            `  yesly campaigns list --status running`,
+	"campaigns.retrieve":        `  yesly campaigns retrieve cmp_5Tn8Wq3Zr1Vb7K`,
+	"campaigns.pause":           `  yesly campaigns pause cmp_5Tn8Wq3Zr1Vb7K`,
+	"campaigns.resume":          `  yesly campaigns resume cmp_5Tn8Wq3Zr1Vb7K`,
+	"campaigns.cancel":          `  yesly campaigns cancel cmp_5Tn8Wq3Zr1Vb7K`,
+	"campaigns.list_recipients": `  yesly campaigns list-recipients cmp_5Tn8Wq3Zr1Vb7K --status failed --all`,
+	"messages.list":             `  yesly messages list --conversation cnv_7Qp4Ns2Xk9Lm3D`,
 	"messages.create": `  yesly messages create --agent agt_8Hd2kQ4mZ1LpXy --contact ctc_3Kf9Lq2Wm7Rt4B \
     --channel sms --text "Hola Marta, tu pedido 8841 sale hoy."
   yesly messages create --agent agt_8Hd2kQ4mZ1LpXy --contact ctc_3Kf9Lq2Wm7Rt4B --channel whatsapp \

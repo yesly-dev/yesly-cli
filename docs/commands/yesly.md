@@ -29,7 +29,8 @@ Authenticate once with "yesly login", or set YESLY_API_KEY.
 * [yesly agents](yesly_agents.md)	 - The assistants Yesly built for you, and the settings you control
 * [yesly analytics](yesly_analytics.md)	 - The figures behind the dashboard's Analytics page
 * [yesly api](yesly_api.md)	 - Send any request to the API
-* [yesly balance](yesly_balance.md)	 - The prepaid balance and every charge and top-up
+* [yesly balance](yesly_balance.md)	 - The prepaid balance of your organization, shared by all its accounts, and every charge and top-up
+* [yesly campaigns](yesly_campaigns.md)	 - One agent contacting many people at a steady pace
 * [yesly completion](yesly_completion.md)	 - Generate the autocompletion script for the specified shell
 * [yesly contacts](yesly_contacts.md)	 - Your customers, their identifiers, and what your agents remember about them
 * [yesly conversations](yesly_conversations.md)	 - Calls and threads of messages between an agent and a contact

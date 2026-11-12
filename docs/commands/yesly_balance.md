@@ -1,10 +1,10 @@
 ## yesly balance
 
-The prepaid balance and every charge and top-up
+The prepaid balance of your organization, shared by all its accounts, and every charge and top-up
 
 ### Synopsis
 
-The prepaid balance and every charge and top-up.
+The prepaid balance of your organization, shared by all its accounts, and every charge and top-up.
 
 ```
 yesly balance [flags]
