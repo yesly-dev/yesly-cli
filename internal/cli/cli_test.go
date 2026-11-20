@@ -119,7 +119,7 @@ func TestCreateBuildsTheBodyFromFlagsAndData(t *testing.T) {
 	r := run(t, "", "conversations", "create", "--api-key", "ysk_test_x", "--base-url", api.URL,
 		"--data", `{"agent":"agt_old","start_at":"2026-12-01T10:00:00+01:00"}`,
 		"--agent", "agt_8Hd2kQ4mZ1LpXy", "--contact", `{"external_id":"customer-3391","phone":"+34600000001","name":"Marta"}`,
-		"--channels", "whatsapp,call", "--context", `{"order":"8841","delivery_window":"2026-12-02T09:00/13:00"}`)
+		"--channel", "whatsapp", "--context", `{"order":"8841","delivery_window":"2026-12-02T09:00/13:00"}`)
 	if r.code != 0 {
 		t.Fatalf("exit %d: %s", r.code, r.err)
 	}
@@ -132,7 +132,7 @@ func TestCreateBuildsTheBodyFromFlagsAndData(t *testing.T) {
 	want := map[string]any{
 		"agent":    "agt_8Hd2kQ4mZ1LpXy",
 		"contact":  map[string]any{"external_id": "customer-3391", "name": "Marta", "phone": "+34600000001"},
-		"channels": []any{"whatsapp", "call"},
+		"channel":  "whatsapp",
 		"start_at": "2026-12-01T10:00:00+01:00",
 		"context":  map[string]any{"delivery_window": "2026-12-02T09:00/13:00", "order": "8841"},
 	}
@@ -278,7 +278,7 @@ func TestUsageErrorsExitWithTwo(t *testing.T) {
 		{"conversations", "list", "--status", "nope"},
 		{"conversations", "create", "--nope"},
 		{"conversations", "create", "--data", "[1]"},
-		{"conversations", "create", "--channels", "fax"},
+		{"conversations", "create", "--channel", "fax"},
 		{"contacts", "create", "--metadata", "novalue"},
 		{"conversations", "list", "--base-url", "http://example.com"},
 	} {

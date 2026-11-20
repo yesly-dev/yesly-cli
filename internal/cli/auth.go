@@ -18,8 +18,8 @@ func loginCommand(app *App) *cobra.Command {
 by --profile ("default" if not given). Paste the key at the prompt, or pipe
 it in: echo "$KEY" | yesly login. --base-url is saved with the profile.
 
-Create keys in the dashboard, under API keys. Keys starting with ysk_test_
-run in test mode; ysk_live_ keys contact real customers and spend balance.`,
+Create keys in the dashboard, under API keys. Every key is ysk_live_: there
+is no test mode, so calls and messages are real and spend balance.`,
 		Example: "  yesly login\n  yesly login --profile mock --base-url http://localhost:4010",
 		Args:    noArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
@@ -32,7 +32,7 @@ run in test mode; ysk_live_ keys contact real customers and spend balance.`,
 			}
 			key = strings.TrimSpace(key)
 			if api.Mode(key) == "" {
-				return usagef("that does not look like a Yesly API key (ysk_test_… or ysk_live_…)")
+				return usagef("that does not look like a Yesly API key (ysk_live_…)")
 			}
 			app.apiKey = key
 			c, err := app.credentials()
@@ -63,7 +63,7 @@ run in test mode; ysk_live_ keys contact real customers and spend balance.`,
 
 func (app *App) promptKey() (string, error) {
 	if app.IsTerminal != nil && app.IsTerminal() && app.ReadSecret != nil {
-		fmt.Fprint(app.Err, "API key (ysk_test_… or ysk_live_…): ")
+		fmt.Fprint(app.Err, "API key (ysk_live_…): ")
 		key, err := app.ReadSecret()
 		fmt.Fprintln(app.Err)
 		return key, err

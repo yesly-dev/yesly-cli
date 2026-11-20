@@ -6,7 +6,7 @@ Create a campaign
 
 Create a campaign.
 
-Asks an agent to contact many people. Every recipient is checked before anything is stored; the first problem is the error, and `param` points at the row (`recipients[12].phone`, `recipients[3].email`, `recipients[7]`, `recipients[0].context`, `recipients[5].contact`). Once a minute, for each running campaign, Yesly starts the next `rate` conversations as ordinary outbound conversations, only inside the agent's contact hours in live mode (test mode ignores hours). The campaign is `scheduled` until `start_at`. A recipient is either an existing contact (`contact`) or the person's details, which find or create the contact when its conversation starts. Live phone numbers must be Spanish mobiles or landlines. Send an `Idempotency-Key`: a retry then never creates two campaigns.
+Asks an agent to contact many people. Every recipient is checked before anything is stored; the first problem is the error, and `param` points at the row (`recipients[12].phone`, `recipients[3].email`, `recipients[7]`, `recipients[0].context`, `recipients[5].contact`). Once a minute, for each running campaign, Yesly starts the next `rate` conversations as ordinary outbound conversations, only inside the agent's contact hours. The campaign is `scheduled` until `start_at`. A recipient is either an existing contact (`contact`) or the person's details, which find or create the contact when its conversation starts. Phone numbers must be Spanish mobiles or landlines. Send an `Idempotency-Key`: a retry then never creates two campaigns.
 
 API: POST /campaigns
 
@@ -20,7 +20,7 @@ yesly campaigns create [flags]
 
 ```
   yesly campaigns create --name "Delivery confirmations December" --agent agt_8Hd2kQ4mZ1LpXy \
-    --channels whatsapp,call --start-at 2026-12-01T10:00:00+01:00 --rate 5 \
+    --channel call --start-at 2026-12-01T10:00:00+01:00 --rate 5 \
     --recipients @recipients.json --idempotency-key december-deliveries
   yesly campaigns create --data @campaign.json
 ```
@@ -29,14 +29,15 @@ yesly campaigns create [flags]
 
 ```
       --agent string             (required) Id of the agent, prefixed agt_.
-      --channels strings         (required) The order to try for every recipient, with the same rules as Create a conversation. One of: call, sms, whatsapp, email.
+      --channel string           Every recipient's channel, with the same rules as Create a conversation. One of: call, sms, whatsapp, email.
   -d, --data string              JSON body, inline or @file (@- for stdin)
   -h, --help                     help for create
       --idempotency-key string   Idempotency-Key header (default: a new UUID, reused on retries)
       --name string              (required) 
       --rate int                 Conversations started per minute.
       --recipients string        (required) Who to contact, in order. JSON, inline or @file; a plain word, such as an id, is sent as a string.
-      --start-at string          Not before this time, and always inside contact hours in live mode. Default now. At most 90 days ahead.
+      --start-at string          Not before this time, and always inside contact hours. Default now. At most 90 days ahead.
+      --then string              The contact plan for every recipient. Each step's agent must take every recipient's context. JSON, inline or @file; a plain word, such as an id, is sent as a string.
 ```
 
 ### Options inherited from parent commands

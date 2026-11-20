@@ -6,7 +6,7 @@ Send a test event
 
 Send a test event.
 
-Sends a sample event to the endpoint, signed like a real one, and returns what it answered. Useful to check the URL and your signature check before going live. The event has the `mode` of the key that calls this, and `data` is always a sample `conversation`, whatever the `type`. It is not stored, so it does not appear in List events. Needs a key with full access.
+Sends a sample event to the endpoint, signed like a real one, and returns what it answered. Useful to check the URL and your signature check before relying on it. The event's `mode` is `live`, and `data` is always a sample `conversation`, whatever the `type`. It is not stored, so it does not appear in List events. Needs a key with full access.
 
 API: POST /webhook_endpoints/{id}/test
 
@@ -31,7 +31,7 @@ yesly webhook-endpoints test <id> [flags]
   -d, --data string              JSON body, inline or @file (@- for stdin)
   -h, --help                     help for test
       --idempotency-key string   Idempotency-Key header (default: a new UUID, reused on retries)
-      --type string              Event type to simulate. One of: conversation.created, conversation.started, conversation.transferred, conversation.ended, conversation.no_reply, conversation.cancelled, conversation.failed, message.sent, message.delivered, message.failed, message.received, contact.created, contact.updated, contact.merged, contact.erased, contact.opted_out, contact.opted_in, agent.deployed, balance.low, balance.topped_up.
+      --type string              Event type to simulate. One of: conversation.created, conversation.started, conversation.rescheduled, conversation.transferred, conversation.transfer_failed, conversation.ended, conversation.no_reply, conversation.cancelled, conversation.failed, message.sent, message.delivered, message.failed, message.received, contact.created, contact.updated, contact.merged, contact.erased, contact.opted_out, contact.opted_in, agent.deployed, balance.low, balance.topped_up.
 ```
 
 ### Options inherited from parent commands

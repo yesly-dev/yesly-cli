@@ -6,7 +6,7 @@ Create a template
 
 Create a template.
 
-Sends a WhatsApp template to Meta for review. It starts `pending`; Meta usually answers within 48 hours. In test mode it is `approved` at once.
+Sends a WhatsApp template to Meta for review. It starts `pending`; Meta usually answers within 48 hours.
 
 API: POST /templates
 
@@ -27,6 +27,7 @@ yesly templates create [flags]
 
 ```
       --body string              (required) 
+      --buttons strings          Up to 3 quick-reply buttons, all different. Not for authentication templates.
       --category string          (required) One of: utility, marketing, authentication.
   -d, --data string              JSON body, inline or @file (@- for stdin)
       --examples strings         A sample value for each variable; Meta rejects templates without them.

@@ -6,7 +6,7 @@ List conversations
 
 List conversations.
 
-Newest first by creation, or oldest first with `order=asc`.
+Newest first by creation, or oldest first with `order=asc`. With `status=scheduled` (and no `contact`), it lists what is still to start instead: soonest `start_at` first, and `from`, `to` and `order` apply to `start_at`.
 
 API: GET /conversations
 
@@ -26,7 +26,7 @@ yesly conversations list [flags]
 ```
       --agent string            Only this agent's.
       --all                     follow every page and print all items as one JSON array
-      --channel string          Only conversations whose current or last channel is this one. One of: call, sms, whatsapp, email.
+      --channel string          Only conversations whose current or last channel is this one. With status=scheduled, those that will try this channel. One of: call, sms, whatsapp, email.
       --contact string          Only this contact's.
       --direction string        Only outbound or only inbound. One of: outbound, inbound.
       --from string             Created on or after this day or time. A day starts at 00:00 in your account's time zone.

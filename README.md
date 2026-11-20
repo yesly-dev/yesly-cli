@@ -32,8 +32,8 @@ yesly login
 
 Paste an API key from the dashboard (API keys). The CLI checks it against
 the API and saves it in `~/.config/yesly/config.json`, readable only by you.
-A `ysk_test_` key runs everything in test mode; a `ysk_live_` key contacts
-real customers and spends balance.
+Every key is `ysk_live_…`: there is no test mode, so every call and message
+is real and spends balance.
 
 Keys are read from, in order: `--api-key`, `YESLY_API_KEY`, and the profile
 (`--profile`, `YESLY_PROFILE`, or `default`). Keep several accounts or
@@ -56,9 +56,9 @@ conversation ends:
 # Create the contact, or update it by your own id.
 yesly contacts create --external-id customer-3391 --name Marta --phone +34600000001
 
-# Ask the delivery agent to contact her: WhatsApp first, then a call.
+# Ask the delivery agent to contact her by WhatsApp.
 yesly conversations create --agent agt_8Hd2kQ4mZ1LpXy --contact ctc_3Kf9Lq2Wm7Rt4B \
-  --channels whatsapp,call --start-at 2026-12-01T10:00:00+01:00 \
+  --channel whatsapp --start-at 2026-12-01T10:00:00+01:00 \
   --context '{"order": "8841", "delivery_window": "2026-12-02T09:00/13:00"}' \
   --idempotency-key order-8841-delivery
 
@@ -77,16 +77,18 @@ the first command is optional.
 
 | Resource | Operations |
 | --- | --- |
-| `agents` | `list`, `retrieve`, `update` |
+| `agents` | `add-knowledge`, `list`, `list-knowledge`, `pause`, `remove-knowledge`, `resume`, `retrieve`, `retrieve-knowledge`, `update` |
+| `knowledge` | `assign`, `create`, `delete`, `list`, `retrieve`, `unassign`, `update` |
 | `senders` | `list` |
-| `contacts` | `list`, `create`, `retrieve`, `update`, `delete`, `merge`, `list-memory`, `delete-memory` |
-| `conversations` | `list`, `create`, `retrieve`, `delete`, `cancel`, `list-messages`, `recording` |
-| `messages` | `list`, `create`, `retrieve` |
-| `templates` | `list`, `create` |
-| `opt-outs` | `list`, `create`, `delete` |
+| `contacts` | `create`, `delete`, `delete-memory`, `list`, `list-memory`, `merge`, `retrieve`, `update` |
+| `conversations` | `cancel`, `create`, `delete`, `list`, `list-messages`, `recording`, `retrieve`, `update` |
+| `campaigns` | `cancel`, `create`, `list`, `list-recipients`, `pause`, `resume`, `retrieve` |
+| `messages` | `create`, `list`, `retrieve` |
+| `templates` | `create`, `delete`, `list` |
+| `opt-outs` | `create`, `delete`, `list` |
 | `analytics` | `summary` |
-| `balance` | `retrieve`, `list-transactions` |
-| `webhook-endpoints` | `list`, `create`, `update`, `delete`, `test`, `roll-secret` |
+| `balance` | `list-transactions`, `retrieve` |
+| `webhook-endpoints` | `create`, `delete`, `list`, `roll-secret`, `test`, `update` |
 | `events` | `list`, `retrieve` |
 
 `yesly <resource> <operation> --help` lists every flag with its meaning, and
@@ -95,9 +97,9 @@ the first command is optional.
 ### Flags and bodies
 
 - Fields inside objects use dots: `--limits.daily-spend`, `--template.name`.
-- Lists take commas or repeated flags: `--channels whatsapp,call`.
+- Lists take commas or repeated flags: `--phones +34600000001,+34600000002`.
 - Maps take `key=value`, repeated: `--metadata segment=premium`.
-- Flags with fixed values (`--status`, `--channels`, `--enabled-events`…)
+- Flags with fixed values (`--status`, `--channel`, `--enabled-events`…)
   are checked before sending, and complete in the shell.
 - Free-form objects and lists of objects, such as a conversation's
   `--context` or an agent's `--contact-hours`, take JSON inline or from a
@@ -106,7 +108,7 @@ the first command is optional.
   from stdin (`@-`). Flags given with it override its fields:
 
   ```bash
-  yesly conversations create -d @conversation.json --channels call
+  yesly conversations create -d @conversation.json --channel call
   ```
 
 ### Output
@@ -129,8 +131,9 @@ yesly balance list-transactions --from 2026-11-01 --all | jq 'map(.amount) | add
 
 ### Live keys
 
-With a `ysk_live_` key, commands that change data stop unless you add
-`--live`. Reads (`list`, `retrieve`) never need it.
+Every key is live, so commands that change data stop unless you add
+`--live`: a command typed by mistake never calls or writes to anyone. Reads
+(`list`, `retrieve`) never need it.
 
 ### Retries and idempotency
 
@@ -155,7 +158,7 @@ yesly api PATCH /contacts/ctc_3Kf9Lq2Wm7Rt4B --data @contact.json
 `-f key=value` adds a string and `-F key=value` a typed value (`true`,
 `false`, `null`, numbers, JSON, or `@file`). For GET and DELETE they become
 query parameters; otherwise they go in the body, where `contact.name` or
-`contact[name]` nests and `channels[]` appends.
+`contact[name]` nests and `agents[]` appends.
 
 ## Integration checklist
 
@@ -186,17 +189,16 @@ tools: [llms-full.txt](https://yesly.dev/llms-full.txt) (index in
    `conversation.ended` carries the conversation with its `outcome`
    (`{ "code", "data" }`); `conversation.no_reply`, `conversation.cancelled`
    and `conversation.failed` close the others.
-6. **Build and test with a `ysk_test_` key.** The test phone numbers choose
-   what happens (`+34600000001` answers and the agent ends with its first
-   outcome, `+34600000009` never answers; the full table is in the reference)
-   and waits last seconds.
+6. **Try it on a test agent.** There is no test mode: ask Yesly for a test
+   agent, which runs live and is charged like any other. `--dry-run` prints a
+   request without sending it.
 7. **Retry only what can succeed.** The CLI already retries network errors,
    `408`, `429` and `5xx`, with the same idempotency key. A `4xx` fails the
    same way again: fix the request using the error's `code` and `param`.
 8. **Keep keys on the server.** A read-only key can list and retrieve but not
    write (`api_key_read_only`); a key limited to one agent gets `403`
-   `api_key_agent_scope` on any other. With a `ysk_live_` key, commands that
-   change data also need `--live`.
+   `api_key_agent_scope` on any other. Commands that change data also
+   need `--live`.
 
 ## Webhooks
 

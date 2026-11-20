@@ -28,6 +28,7 @@ yesly conversations recording <id> [flags]
 ```
   -h, --help             help for recording
       --message string   The call, prefixed msg_.
+      --part int         The part of a call one agent passed to another, one per agent (the message's recording_parts). The first by default.
 ```
 
 ### Options inherited from parent commands

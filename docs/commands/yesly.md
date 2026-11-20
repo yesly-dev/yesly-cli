@@ -35,6 +35,7 @@ Authenticate once with "yesly login", or set YESLY_API_KEY.
 * [yesly contacts](yesly_contacts.md)	 - Your customers, their identifiers, and what your agents remember about them
 * [yesly conversations](yesly_conversations.md)	 - Calls and threads of messages between an agent and a contact
 * [yesly events](yesly_events.md)	 - Everything that happened, as delivered to webhook endpoints
+* [yesly knowledge](yesly_knowledge.md)	 - Your company's documents, and which agents know each one
 * [yesly listen](yesly_listen.md)	 - Receive your account's events locally, without a public URL
 * [yesly login](yesly_login.md)	 - Save an API key in a profile
 * [yesly logout](yesly_logout.md)	 - Remove a saved profile

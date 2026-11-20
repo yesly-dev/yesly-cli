@@ -6,7 +6,7 @@ Resume an agent
 
 Resume an agent.
 
-The agent starts conversations again.
+The agent starts conversations again. Keys that can write, and owners and admins in the dashboard.
 
 API: POST /agents/{id}/resume
 

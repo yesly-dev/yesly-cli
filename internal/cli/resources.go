@@ -219,7 +219,14 @@ func (app *App) listAll(ctx context.Context, req api.Request) error {
 // fieldSet is the flags bound for a list of fields.
 type fieldSet []spec.Field
 
-func flagName(field string) string { return kebab(field) }
+// flagName is a field's flag. A body field called data (a file in base64) is --file-data:
+// --data is the whole JSON body.
+func flagName(field string) string {
+	if field == "data" {
+		return "file-data"
+	}
+	return kebab(field)
+}
 
 func flagUsage(fl spec.Field) string {
 	u := fl.Description

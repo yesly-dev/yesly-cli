@@ -8,8 +8,8 @@ Saves an API key, after checking it against the API, in the profile named
 by --profile ("default" if not given). Paste the key at the prompt, or pipe
 it in: echo "$KEY" | yesly login. --base-url is saved with the profile.
 
-Create keys in the dashboard, under API keys. Keys starting with ysk_test_
-run in test mode; ysk_live_ keys contact real customers and spend balance.
+Create keys in the dashboard, under API keys. Every key is ysk_live_: there
+is no test mode, so calls and messages are real and spend balance.
 
 ```
 yesly login [flags]

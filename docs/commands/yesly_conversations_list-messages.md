@@ -6,7 +6,7 @@ List a conversation's messages
 
 List a conversation's messages.
 
-What the contact and the agent said or wrote, in order, on every channel, read from the agent's memory. All of it, in one page. Empty once the transcript has expired or been deleted (the conversation's `transcript` says which). Every read is in your account's access log.
+What the contact and the agent said or wrote, in order, on every channel, read from the agent's memory. All of it, in one page. Empty once the transcript has expired (the conversation's `transcript` says so). Every read is in your account's access log.
 
 API: GET /conversations/{id}/messages
 

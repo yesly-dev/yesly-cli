@@ -8,7 +8,9 @@ Retrieve the balance.
 
 Yesly is prepaid. The balance belongs to your organization: every account in it spends from the same one, and this endpoint returns it whichever account's key you use. Each SMS, WhatsApp message and email, and each started minute of a call that was picked up, is taken from it at your account's prices; calls nobody picks up are free. A message that could not be sent is refunded with an `adjustment`. A live call holds its longest cost (the agent's `max_call_minutes`) until it ends. Top-ups are made by card in the dashboard and cannot be made through the API.
 
-When the balance does not cover the next message, it is refused (`402`, or the conversation ends `failed`). Watch `balance.low`. Test mode always returns a balance of 0 and never blocks.
+Your organization tops up the balance every month: `monthly_top_up` is that monthly charge to your card, at least your organization's `minimum`, and further top-ups are added on top of it once it is on. The balance does not expire: what you do not spend in a month stays. Without the monthly top-up (not started yet, a month that could not be charged, or cancelled) the balance can be spent for a month more, until `spendable_until`; after that it is paused (`paused`) and spends again once the monthly top-up is on.
+
+When the balance does not cover the next message, it is refused (`402`, or the conversation ends `failed`). Watch `balance.low`.
 
 API: GET /balance
 

@@ -29,7 +29,7 @@ yesly webhook-endpoints update <id> [flags]
   -d, --data string              JSON body, inline or @file (@- for stdin)
       --description string       New note.
       --disabled                 true stops sending events to it and drops its pending retries. false enables it again and resets its count of failed deliveries.
-      --enabled-events strings   Replaces the list of event types. One of: conversation.created, conversation.started, conversation.transferred, conversation.ended, conversation.no_reply, conversation.cancelled, conversation.failed, message.sent, message.delivered, message.failed, message.received, contact.created, contact.updated, contact.merged, contact.erased, contact.opted_out, contact.opted_in, agent.deployed, balance.low, balance.topped_up, *.
+      --enabled-events strings   Replaces the list of event types. One of: conversation.created, conversation.started, conversation.rescheduled, conversation.transferred, conversation.transfer_failed, conversation.ended, conversation.no_reply, conversation.cancelled, conversation.failed, message.sent, message.delivered, message.failed, message.received, contact.created, contact.updated, contact.merged, contact.erased, contact.opted_out, contact.opted_in, agent.deployed, balance.low, balance.topped_up, *.
   -h, --help                     help for update
       --url string               New URL.
 ```

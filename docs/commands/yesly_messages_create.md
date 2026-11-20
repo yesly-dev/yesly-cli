@@ -6,7 +6,7 @@ Send a message
 
 Send a message.
 
-One SMS, WhatsApp message or email to a contact, from an agent's sender, outside any conversation. It follows the same rules as an agent's messages: the opt-out (`409` `contact_opted_out`), your contact hours (`422` `outside_contact_hours`), WhatsApp's 24-hour rule (`422` `template_required`), the agent's spend limit and the balance (`402`). A reply from the contact opens a conversation with the agent.
+One SMS, WhatsApp message or email to a contact, from an agent's sender, outside any conversation. It follows the same rules as an agent's messages: the opt-out (`409` `contact_opted_out`), your contact hours (`422` `outside_contact_hours`), WhatsApp's 24-hour rule (`422` `template_required`), the agent's spend limit and the balance (`402`). It carries no answers: what the contact writes back reaches no agent.
 
 API: POST /messages
 

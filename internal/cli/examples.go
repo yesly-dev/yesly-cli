@@ -9,7 +9,19 @@ var examples = map[string]string{
 	"agents.resume":   `  yesly agents resume agt_8Hd2kQ4mZ1LpXy`,
 	"agents.update": `  yesly agents update agt_8Hd2kQ4mZ1LpXy --limits.messages-per-conversation 20 --recording.enabled
   yesly agents update agt_8Hd2kQ4mZ1LpXy --contact-hours @hours.json`,
-	"senders.list": `  yesly senders list --agent agt_8Hd2kQ4mZ1LpXy --channel whatsapp`,
+	"agents.list_knowledge":     `  yesly agents list-knowledge agt_8Hd2kQ4mZ1LpXy`,
+	"agents.add_knowledge":      `  yesly agents add-knowledge agt_8Hd2kQ4mZ1LpXy --name opening-hours.md --text "$(cat opening-hours.md)"`,
+	"agents.retrieve_knowledge": `  yesly agents retrieve-knowledge agt_8Hd2kQ4mZ1LpXy doc_4Rk7Tn2Pq9Ws1L`,
+	"agents.remove_knowledge":   `  yesly agents remove-knowledge agt_8Hd2kQ4mZ1LpXy doc_4Rk7Tn2Pq9Ws1L`,
+	"knowledge.list":            `  yesly knowledge list --all`,
+	"knowledge.create": `  yesly knowledge create --name opening-hours.md --text "$(cat opening-hours.md)" --agents agt_8Hd2kQ4mZ1LpXy
+  yesly knowledge create --name prices.pdf --file-data "$(base64 < prices.pdf)"`,
+	"knowledge.retrieve": `  yesly knowledge retrieve doc_4Rk7Tn2Pq9Ws1L`,
+	"knowledge.update":   `  yesly knowledge update doc_4Rk7Tn2Pq9Ws1L --text "$(cat opening-hours.md)"`,
+	"knowledge.delete":   `  yesly knowledge delete doc_4Rk7Tn2Pq9Ws1L`,
+	"knowledge.assign":   `  yesly knowledge assign doc_4Rk7Tn2Pq9Ws1L --agent agt_8Hd2kQ4mZ1LpXy`,
+	"knowledge.unassign": `  yesly knowledge unassign doc_4Rk7Tn2Pq9Ws1L agt_8Hd2kQ4mZ1LpXy`,
+	"senders.list":       `  yesly senders list --agent agt_8Hd2kQ4mZ1LpXy --channel whatsapp`,
 	"contacts.list": `  yesly contacts list --external-id customer-3391
   yesly contacts list --phone +34600000001
   yesly contacts list --all`,
@@ -26,18 +38,20 @@ var examples = map[string]string{
   yesly conversations list --contact ctc_3Kf9Lq2Wm7Rt4B --all`,
 	"conversations.create": `  yesly conversations create --agent agt_8Hd2kQ4mZ1LpXy \
     --contact '{"external_id": "customer-3391", "phone": "+34600000001", "name": "Marta"}' \
-    --channels whatsapp,call --start-at 2026-12-01T10:00:00+01:00 \
+    --channel whatsapp --start-at 2026-12-01T10:00:00+01:00 \
     --context '{"order": "8841", "delivery_window": "2026-12-02T09:00/13:00"}' \
     --idempotency-key order-8841-delivery
   yesly conversations create --agent agt_8Hd2kQ4mZ1LpXy --contact ctc_3Kf9Lq2Wm7Rt4B \
-    --channels call --context '{"order": "8902"}'`,
-	"conversations.retrieve":      `  yesly conversations retrieve cnv_7Qp4Ns2Xk9Lm3D`,
+    --context '{"order": "8902"}' --then @contact-plan.json`,
+	"conversations.retrieve": `  yesly conversations retrieve cnv_7Qp4Ns2Xk9Lm3D`,
+	"conversations.update": `  yesly conversations update cnv_7Qp4Ns2Xk9Lm3D --start-at 2026-12-03T10:00:00+01:00
+  yesly conversations update cnv_7Qp4Ns2Xk9Lm3D --context '{"order": "8841", "delivery_window": "2026-12-03T09:00/13:00"}'`,
 	"conversations.delete":        `  yesly conversations delete cnv_7Qp4Ns2Xk9Lm3D`,
 	"conversations.cancel":        `  yesly conversations cancel cnv_7Qp4Ns2Xk9Lm3D`,
 	"conversations.list_messages": `  yesly conversations list-messages cnv_7Qp4Ns2Xk9Lm3D`,
 	"conversations.recording":     `  yesly conversations recording cnv_7Qp4Ns2Xk9Lm3D --message msg_…`,
 	"campaigns.create": `  yesly campaigns create --name "Delivery confirmations December" --agent agt_8Hd2kQ4mZ1LpXy \
-    --channels whatsapp,call --start-at 2026-12-01T10:00:00+01:00 --rate 5 \
+    --channel call --start-at 2026-12-01T10:00:00+01:00 --rate 5 \
     --recipients @recipients.json --idempotency-key december-deliveries
   yesly campaigns create --data @campaign.json`,
 	"campaigns.list":            `  yesly campaigns list --status running`,

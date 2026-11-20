@@ -11,7 +11,7 @@ Idempotency-Key.
 -f key=value adds a string; -F key=value adds a typed value (true, false,
 null, numbers and JSON stay as they are, @file reads a file). For GET and
 DELETE they become query parameters; otherwise they go in the JSON body,
-where "contact.name" or "contact[name]" nests and "channels[]" appends.
+where "contact.name" or "contact[name]" nests and "agents[]" appends.
 
 ```
 yesly api <method> <path> [flags]
@@ -22,7 +22,8 @@ yesly api <method> <path> [flags]
 ```
   yesly api GET /conversations -f status=no_reply -F limit=5
   yesly api POST /conversations -f agent=agt_8Hd2kQ4mZ1LpXy -f contact.external_id=customer-3391 \
-    -f contact.phone=+34600000001 -f channels[]=whatsapp -f channels[]=call -f context.order=8841
+    -f contact.phone=+34600000001 -f channel=whatsapp -f context.order=8841
+  yesly api POST /knowledge -f name=opening-hours.md -f text="Open 9 to 18" -f agents[]=agt_8Hd2kQ4mZ1LpXy
   yesly api PATCH /contacts/ctc_3Kf9Lq2Wm7Rt4B --data @changes.json
 ```
 

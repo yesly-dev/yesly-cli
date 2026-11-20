@@ -6,7 +6,7 @@ Update an agent's settings
 
 Update an agent's settings.
 
-Changes the settings you own: voice, email profile, limits, contact hours, recording, the disclosure sentence and the transfer targets. The agent's code, models, outcomes and context are Yesly's: ask for a new version. Accounts with EU data residency cannot choose a voice that is processed outside the EU (`voice_not_in_eu`).
+Changes the settings you own: voice, email profile, limits, contact hours, recording, the disclosure sentence, the transfer targets, and the agent's extensions and integrations (your own prompt sections, outcomes and tools that call your systems; the credentials are kept encrypted and never returned). The agent's code, models, outcomes and context are Yesly's: ask for a new version. Accounts with EU data residency cannot choose a voice that is processed outside the EU (`voice_not_in_eu`). Keys that can write, and owners and admins in the dashboard. The agent's documents are under Knowledge.
 
 API: PATCH /agents/{id}
 
@@ -33,12 +33,15 @@ yesly agents update <id> [flags]
   -d, --data string                            JSON body, inline or @file (@- for stdin)
       --disclosure string                      Cannot be empty (disclosure_required).
       --email-profile string                   One of the company's email profiles, or null for Yesly's sender.
+      --extensions string                      Replaces them whole; null removes them (extension_invalid). JSON, inline or @file; a plain word, such as an id, is sent as a string.
   -h, --help                                   help for update
+      --integrations string                    Replaces the list, up to 5; null removes them (integration_invalid). An integration sent without its secret keeps the one stored for the same name and host. An integration a tool uses cannot be removed. JSON, inline or @file; a plain word, such as an id, is sent as a string.
       --limits.daily-spend float               
       --limits.max-call-minutes int            
       --limits.messages-per-conversation int   
       --recording.enabled                      
       --transfer-targets string                Replaces the list. Up to 10. JSON, inline or @file; a plain word, such as an id, is sent as a string.
+      --transfer-wait-seconds float            How long the contact hears the transfer sound at least, 1 to 20 in halves of a second; null for the default, 1.5 (transfer_wait_invalid).
       --voice string                           A voice of the catalog, or null for the agent's default.
 ```
 
