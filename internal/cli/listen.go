@@ -35,10 +35,16 @@ func listenCommand(app *App) *cobra.Command {
 with --forward-to, posts it to a local URL signed like a webhook delivery,
 so you can test your handler without exposing it to the internet.
 
+Events carry your customers' data, so --forward-to takes http:// only for
+this machine (localhost, 127.0.0.1, ::1) and https:// anywhere, and a
+redirect is reported, not followed.
+
 Deliveries are signed with --secret, or with a secret this command creates
-and saves in the profile; verify them with that secret in development. Events
-arrive with up to --interval of delay, from the moment listen starts. This
-does not create a webhook endpoint, and real endpoints keep receiving events.`,
+and saves in the profile; verify them with that secret in development. The
+saved secret is printed when listen starts; one given with --secret is not.
+Events arrive with up to --interval of delay, from the moment listen starts.
+This does not create a webhook endpoint, and real endpoints keep receiving
+events.`,
 		Example: `  yesly listen
   yesly listen --forward-to http://localhost:3000/yesly/webhook
   yesly listen --events conversation.ended,conversation.no_reply`,
@@ -47,22 +53,25 @@ does not create a webhook endpoint, and real endpoints keep receiving events.`,
 			if err := checkEnum(spec.Field{Name: "events", Enum: spec.EventTypes}, types...); err != nil {
 				return err
 			}
+			showSecret := false
 			if forwardTo != "" {
-				u, err := url.Parse(forwardTo)
-				if err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" {
-					return usagef("--forward-to must be an http:// or https:// URL")
+				if err := checkForwardTo(forwardTo); err != nil {
+					return err
 				}
 				if secret == "" {
+					var err error
 					if secret, err = app.listenSecret(); err != nil {
 						return err
 					}
+					// The CLI's own development secret; one typed by the user stays out of the output.
+					showSecret = true
 				}
 			}
-			return app.listen(cmd.Context(), forwardTo, secret, types, interval)
+			return app.listen(cmd.Context(), forwardTo, secret, showSecret, types, interval)
 		},
 	}
 	f := cmd.Flags()
-	f.StringVar(&forwardTo, "forward-to", "", "URL to post each event to, signed with Yesly-Signature")
+	f.StringVar(&forwardTo, "forward-to", "", "URL to post each event to, signed with Yesly-Signature (https://, or http:// on this machine)")
 	f.StringVar(&secret, "secret", "", "signing secret for forwarded events (default: one saved in the profile)")
 	f.StringSliceVar(&types, "events", nil, "only these event types (default: all)")
 	f.DurationVar(&interval, "interval", 2*time.Second, "time between polls")
@@ -70,6 +79,19 @@ does not create a webhook endpoint, and real endpoints keep receiving events.`,
 		return spec.EventTypes, cobra.ShellCompDirectiveNoFileComp
 	})
 	return cmd
+}
+
+// checkForwardTo refuses a target that would send events, which carry
+// customers' names and phone numbers, in clear over the network.
+func checkForwardTo(raw string) error {
+	u, err := url.Parse(raw)
+	if err != nil || u.Host == "" || (u.Scheme != "http" && u.Scheme != "https") {
+		return usagef("--forward-to must be an http:// or https:// URL")
+	}
+	if u.Scheme == "http" && !api.Loopback(u.Hostname()) {
+		return usagef("--forward-to takes http:// only for this machine (localhost, 127.0.0.1 or ::1); use https:// for %s, so events do not travel in clear", u.Hostname())
+	}
+	return nil
 }
 
 // listenSecret returns the profile's forwarding secret, creating it the first time.
@@ -104,7 +126,7 @@ type listenedEvent struct {
 	created time.Time
 }
 
-func (app *App) listen(ctx context.Context, forwardTo, secret string, types []string, interval time.Duration) error {
+func (app *App) listen(ctx context.Context, forwardTo, secret string, showSecret bool, types []string, interval time.Duration) error {
 	c, err := app.credentials()
 	if err != nil {
 		return err
@@ -131,7 +153,11 @@ func (app *App) listen(ctx context.Context, forwardTo, secret string, types []st
 
 	mode := api.Mode(c.apiKey)
 	if forwardTo != "" {
-		fmt.Fprintf(app.Err, "Forwarding %s-mode events to %s, signed with %s. Ctrl-C to stop.\n", mode, forwardTo, secret)
+		signedWith := "the secret given with --secret"
+		if showSecret {
+			signedWith = secret
+		}
+		fmt.Fprintf(app.Err, "Forwarding %s-mode events to %s, signed with %s. Ctrl-C to stop.\n", mode, forwardTo, signedWith)
 	} else {
 		fmt.Fprintf(app.Err, "Listening for %s-mode events. Ctrl-C to stop.\n", mode)
 	}
@@ -215,7 +241,9 @@ func (app *App) pollEvents(ctx context.Context, client *api.Client, t time.Time)
 	return out, nil
 }
 
-// forward posts one event as a webhook delivery would arrive.
+// forward posts one event as a webhook delivery would arrive. A redirect is
+// an error: following it would post the event and its signature to an
+// address the user did not give.
 func (app *App) forward(ctx context.Context, target, secret string, raw json.RawMessage) (int, error) {
 	var body bytes.Buffer
 	if err := json.Compact(&body, raw); err != nil {
@@ -230,15 +258,21 @@ func (app *App) forward(ctx context.Context, target, secret string, raw json.Raw
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", "yesly-cli/"+version.Version+" (listen)")
 	req.Header.Set("Yesly-Signature", webhook.Sign(body.Bytes(), secret, app.Now()))
-	hc := app.HTTP
-	if hc == nil {
-		hc = http.DefaultClient
+	hc := &http.Client{}
+	if app.HTTP != nil {
+		*hc = *app.HTTP
 	}
+	hc.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
 	res, err := hc.Do(req)
 	if err != nil {
 		return 0, err
 	}
 	defer res.Body.Close()
 	_, _ = io.Copy(io.Discard, res.Body)
+	if res.StatusCode >= 300 && res.StatusCode < 400 {
+		if to := res.Header.Get("Location"); to != "" {
+			return 0, fmt.Errorf("%d: redirect to %s not followed; pass the final URL to --forward-to", res.StatusCode, to)
+		}
+	}
 	return res.StatusCode, nil
 }

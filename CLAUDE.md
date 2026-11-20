@@ -22,4 +22,4 @@ go run ./cmd/yesly gen-docs docs/commands           # regenerate the command doc
 
 ## Releasing
 
-Bump `Version` in `internal/version/version.go` and the status line in the README, then push a tag `v<version>`. The release workflow runs the tests and GoReleaser in the `release` environment, which can require reviewers.
+Bump `Version` in `internal/version/version.go` and the status line in the README, then push a tag `v<version>`. The release workflow runs the tests and GoReleaser in the `release` environment, which can require reviewers. Both workflows pin the Go patch release (`go-version`) and the GoReleaser version: `go.mod` only sets the minimum Go, so raise the two pins by hand, to releases at least two weeks old.

@@ -8,10 +8,16 @@ Polls GET /events for new events and prints each one as a line of JSON, or,
 with --forward-to, posts it to a local URL signed like a webhook delivery,
 so you can test your handler without exposing it to the internet.
 
+Events carry your customers' data, so --forward-to takes http:// only for
+this machine (localhost, 127.0.0.1, ::1) and https:// anywhere, and a
+redirect is reported, not followed.
+
 Deliveries are signed with --secret, or with a secret this command creates
-and saves in the profile; verify them with that secret in development. Events
-arrive with up to --interval of delay, from the moment listen starts. This
-does not create a webhook endpoint, and real endpoints keep receiving events.
+and saves in the profile; verify them with that secret in development. The
+saved secret is printed when listen starts; one given with --secret is not.
+Events arrive with up to --interval of delay, from the moment listen starts.
+This does not create a webhook endpoint, and real endpoints keep receiving
+events.
 
 ```
 yesly listen [flags]
@@ -29,7 +35,7 @@ yesly listen [flags]
 
 ```
       --events strings      only these event types (default: all)
-      --forward-to string   URL to post each event to, signed with Yesly-Signature
+      --forward-to string   URL to post each event to, signed with Yesly-Signature (https://, or http:// on this machine)
   -h, --help                help for listen
       --interval duration   time between polls (default 2s)
       --secret string       signing secret for forwarded events (default: one saved in the profile)

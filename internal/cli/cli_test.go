@@ -12,6 +12,7 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -116,7 +117,7 @@ func TestEveryOperationIsACommandWithAnExample(t *testing.T) {
 func TestCreateBuildsTheBodyFromFlagsAndData(t *testing.T) {
 	setup(t)
 	api := newFakeAPI(t)
-	r := run(t, "", "conversations", "create", "--api-key", "ysk_test_x", "--base-url", api.URL,
+	r := run(t, "", "conversations", "create", "--live", "--api-key", "ysk_live_x", "--base-url", api.URL,
 		"--data", `{"agent":"agt_old","start_at":"2026-12-01T10:00:00+01:00"}`,
 		"--agent", "agt_8Hd2kQ4mZ1LpXy", "--contact", `{"external_id":"customer-3391","phone":"+34600000001","name":"Marta"}`,
 		"--channel", "whatsapp", "--context", `{"order":"8841","delivery_window":"2026-12-02T09:00/13:00"}`)
@@ -152,7 +153,7 @@ func TestCreateBuildsTheBodyFromFlagsAndData(t *testing.T) {
 func TestJSONFlagTakesAPlainID(t *testing.T) {
 	setup(t)
 	api := newFakeAPI(t)
-	r := run(t, "", "messages", "create", "--api-key", "ysk_test_x", "--base-url", api.URL,
+	r := run(t, "", "messages", "create", "--live", "--api-key", "ysk_live_x", "--base-url", api.URL,
 		"--agent", "agt_8Hd2kQ4mZ1LpXy", "--contact", "ctc_3Kf9Lq2Wm7Rt4B", "--channel", "sms", "--text", "Hola")
 	if r.code != 0 {
 		t.Fatalf("exit %d: %s", r.code, r.err)
@@ -160,7 +161,7 @@ func TestJSONFlagTakesAPlainID(t *testing.T) {
 	if b := api.last(t).Body; b != `{"agent":"agt_8Hd2kQ4mZ1LpXy","channel":"sms","contact":"ctc_3Kf9Lq2Wm7Rt4B","text":"Hola"}` {
 		t.Fatalf("body = %s", b)
 	}
-	if r := run(t, "", "messages", "create", "--api-key", "ysk_test_x", "--dry-run",
+	if r := run(t, "", "messages", "create", "--api-key", "ysk_live_x", "--dry-run",
 		"--agent", "agt_1", "--contact", `{"phone":`, "--channel", "sms"); r.code != 2 {
 		t.Fatalf("broken JSON object: exit %d", r.code)
 	}
@@ -169,7 +170,7 @@ func TestJSONFlagTakesAPlainID(t *testing.T) {
 func TestTypedFlags(t *testing.T) {
 	setup(t)
 	api := newFakeAPI(t)
-	r := run(t, "", "agents", "update", "agt_8Hd2kQ4mZ1LpXy", "--api-key", "ysk_test_x", "--base-url", api.URL,
+	r := run(t, "", "agents", "update", "agt_8Hd2kQ4mZ1LpXy", "--live", "--api-key", "ysk_live_x", "--base-url", api.URL,
 		"--limits.messages-per-conversation", "21", "--recording.enabled=false")
 	if r.code != 0 {
 		t.Fatalf("exit %d: %s", r.code, r.err)
@@ -183,7 +184,7 @@ func TestTypedFlags(t *testing.T) {
 func TestPostWithoutBodyFlagsSendsAnEmptyObjectAndAnIdempotencyKey(t *testing.T) {
 	setup(t)
 	api := newFakeAPI(t)
-	r := run(t, "", "webhook-endpoints", "roll-secret", "we_1", "--api-key", "ysk_test_x", "--base-url", api.URL)
+	r := run(t, "", "webhook-endpoints", "roll-secret", "we_1", "--live", "--api-key", "ysk_live_x", "--base-url", api.URL)
 	if r.code != 0 {
 		t.Fatalf("exit %d: %s", r.code, r.err)
 	}
@@ -191,7 +192,7 @@ func TestPostWithoutBodyFlagsSendsAnEmptyObjectAndAnIdempotencyKey(t *testing.T)
 	if c.Path != "/webhook_endpoints/we_1/roll_secret" || c.Body != "{}" || len(c.Header.Get("Idempotency-Key")) != 36 {
 		t.Fatalf("%+v", c)
 	}
-	run(t, "", "conversations", "cancel", "cnv_1", "--api-key", "ysk_test_x", "--base-url", api.URL, "--idempotency-key", "mine")
+	run(t, "", "conversations", "cancel", "cnv_1", "--live", "--api-key", "ysk_live_x", "--base-url", api.URL, "--idempotency-key", "mine")
 	if got := api.last(t).Header.Get("Idempotency-Key"); got != "mine" {
 		t.Fatalf("Idempotency-Key = %q", got)
 	}
@@ -200,7 +201,7 @@ func TestPostWithoutBodyFlagsSendsAnEmptyObjectAndAnIdempotencyKey(t *testing.T)
 func TestQueryFlags(t *testing.T) {
 	setup(t)
 	api := newFakeAPI(t)
-	r := run(t, "", "conversations", "list", "--api-key", "ysk_test_x", "--base-url", api.URL,
+	r := run(t, "", "conversations", "list", "--api-key", "ysk_live_x", "--base-url", api.URL,
 		"--status", "no_reply", "--agent", "agt_8Hd2kQ4mZ1LpXy", "--limit", "5")
 	if r.code != 0 {
 		t.Fatalf("exit %d: %s", r.code, r.err)
@@ -213,7 +214,7 @@ func TestQueryFlags(t *testing.T) {
 func TestPathArgumentsAreEscaped(t *testing.T) {
 	setup(t)
 	api := newFakeAPI(t)
-	run(t, "", "contacts", "update", "a/b", "--api-key", "ysk_test_x", "--base-url", api.URL, "--name", "X")
+	run(t, "", "contacts", "update", "a/b", "--live", "--api-key", "ysk_live_x", "--base-url", api.URL, "--name", "X")
 	if p := api.last(t); !strings.HasSuffix(p.Path, "/contacts/a/b") {
 		// Go decodes %2F in URL.Path; the raw request keeps it escaped.
 		t.Fatalf("path = %s", p.Path)
@@ -233,7 +234,7 @@ func TestListAll(t *testing.T) {
 			w.WriteHeader(400)
 		}
 	}
-	r := run(t, "", "events", "list", "--all", "--compact", "--limit", "2", "--api-key", "ysk_test_x", "--base-url", api.URL)
+	r := run(t, "", "events", "list", "--all", "--compact", "--limit", "2", "--api-key", "ysk_live_x", "--base-url", api.URL)
 	if r.code != 0 || r.out != `[{"id":"evt_3"},{"id":"evt_2"},{"id":"evt_1"}]`+"\n" {
 		t.Fatalf("exit %d, out %q, err %q", r.code, r.out, r.err)
 	}
@@ -264,7 +265,7 @@ func TestAPIErrorsExitWithOne(t *testing.T) {
 		w.WriteHeader(404)
 		_, _ = w.Write([]byte(`{"error":{"type":"invalid_request","code":"resource_missing","message":"No such conversation.","request_id":"req_1"}}`))
 	}
-	r := run(t, "", "conversations", "retrieve", "cnv_x", "--api-key", "ysk_test_x", "--base-url", api.URL)
+	r := run(t, "", "conversations", "retrieve", "cnv_x", "--api-key", "ysk_live_x", "--base-url", api.URL)
 	if r.code != 1 || r.err != "Error: No such conversation. (status 404, type invalid_request, code resource_missing, request req_1)\n" {
 		t.Fatalf("exit %d, err %q", r.code, r.err)
 	}
@@ -282,7 +283,7 @@ func TestUsageErrorsExitWithTwo(t *testing.T) {
 		{"contacts", "create", "--metadata", "novalue"},
 		{"conversations", "list", "--base-url", "http://example.com"},
 	} {
-		r := run(t, "", append(args, "--api-key", "ysk_test_x", "--dry-run")...)
+		r := run(t, "", append(args, "--api-key", "ysk_live_x", "--dry-run")...)
 		if r.code != 2 {
 			t.Errorf("%v: exit %d, err %q", args, r.code, r.err)
 		}
@@ -303,11 +304,11 @@ func TestJSONFlagFromFile(t *testing.T) {
 	api := newFakeAPI(t)
 	file := filepath.Join(t.TempDir(), "a.json")
 	_ = os.WriteFile(file, []byte(`[{"name":"Lunes","days":[1],"from":"09:00","to":"14:00"}]`), 0o600)
-	r := run(t, "", "agents", "update", "agt_1", "--contact-hours", "@"+file, "--api-key", "ysk_test_x", "--base-url", api.URL)
+	r := run(t, "", "agents", "update", "agt_1", "--contact-hours", "@"+file, "--live", "--api-key", "ysk_live_x", "--base-url", api.URL)
 	if r.code != 0 || api.last(t).Body != `{"contact_hours":[{"days":[1],"from":"09:00","name":"Lunes","to":"14:00"}]}` {
 		t.Fatalf("exit %d, err %q, body %s", r.code, r.err, api.last(t).Body)
 	}
-	r = run(t, `{"name":"Marta"}`, "contacts", "update", "ctc_1", "--data", "@-", "--api-key", "ysk_test_x", "--base-url", api.URL)
+	r = run(t, `{"name":"Marta"}`, "contacts", "update", "ctc_1", "--data", "@-", "--live", "--api-key", "ysk_live_x", "--base-url", api.URL)
 	if r.code != 0 || api.last(t).Body != `{"name":"Marta"}` {
 		t.Fatalf("stdin: exit %d, body %s", r.code, api.last(t).Body)
 	}
@@ -316,7 +317,7 @@ func TestJSONFlagFromFile(t *testing.T) {
 func TestAPICommand(t *testing.T) {
 	setup(t)
 	api := newFakeAPI(t)
-	r := run(t, "", "api", "post", "conversations", "--api-key", "ysk_test_x", "--base-url", api.URL,
+	r := run(t, "", "api", "post", "conversations", "--live", "--api-key", "ysk_live_x", "--base-url", api.URL,
 		"-f", "agent=agt_1", "-f", "contact.name=Marta", "-f", "contact[phone]=+34600000001",
 		"-f", "channels[]=sms", "-f", "channels[]=call", "-F", "context={\"order\":\"8841\"}")
 	if r.code != 0 {
@@ -333,16 +334,16 @@ func TestAPICommand(t *testing.T) {
 		t.Fatal("POST /conversations should get an Idempotency-Key")
 	}
 
-	run(t, "", "api", "POST", "/conversations/cnv_1/cancel", "--api-key", "ysk_test_x", "--base-url", api.URL)
+	run(t, "", "api", "POST", "/conversations/cnv_1/cancel", "--live", "--api-key", "ysk_live_x", "--base-url", api.URL)
 	if api.last(t).Header.Get("Idempotency-Key") == "" {
 		t.Fatal("cancel should get an Idempotency-Key")
 	}
-	run(t, "", "api", "POST", "/not_an_operation", "--api-key", "ysk_test_x", "--base-url", api.URL)
+	run(t, "", "api", "POST", "/not_an_operation", "--live", "--api-key", "ysk_live_x", "--base-url", api.URL)
 	if api.last(t).Header.Get("Idempotency-Key") != "" {
 		t.Fatal("a POST that is not an idempotent operation takes no Idempotency-Key")
 	}
 
-	run(t, "", "api", "GET", "/conversations?status=no_reply", "-F", "limit=5", "-f", "metadata[route_id]=BIO", "--api-key", "ysk_test_x", "--base-url", api.URL)
+	run(t, "", "api", "GET", "/conversations?status=no_reply", "-F", "limit=5", "-f", "metadata[route_id]=BIO", "--api-key", "ysk_live_x", "--base-url", api.URL)
 	if q := api.last(t).Query; q != "limit=5&metadata%5Broute_id%5D=BIO&status=no_reply" {
 		t.Fatalf("query = %s", q)
 	}
@@ -351,11 +352,11 @@ func TestAPICommand(t *testing.T) {
 func TestLoginSavesAProfile(t *testing.T) {
 	path := setup(t)
 	api := newFakeAPI(t)
-	r := run(t, "ysk_test_abcdef123456\n", "login", "--profile", "staging", "--base-url", api.URL)
+	r := run(t, "ysk_live_abcdef123456\n", "login", "--profile", "staging", "--base-url", api.URL)
 	if r.code != 0 {
 		t.Fatalf("exit %d: %s", r.code, r.err)
 	}
-	if c := api.last(t); c.Path != "/balance" || c.Header.Get("Authorization") != "Bearer ysk_test_abcdef123456" {
+	if c := api.last(t); c.Path != "/balance" || c.Header.Get("Authorization") != "Bearer ysk_live_abcdef123456" {
 		t.Fatalf("check call = %+v", c)
 	}
 	info, err := os.Stat(path)
@@ -368,7 +369,7 @@ func TestLoginSavesAProfile(t *testing.T) {
 	}
 	f, _ := config.Load()
 	p := f.Profile("staging")
-	if p == nil || p.APIKey != "ysk_test_abcdef123456" || p.BaseURL != api.URL {
+	if p == nil || p.APIKey != "ysk_live_abcdef123456" || p.BaseURL != api.URL {
 		t.Fatalf("profile = %+v", p)
 	}
 	if strings.Contains(r.err, "abcdef123456") {
@@ -377,12 +378,12 @@ func TestLoginSavesAProfile(t *testing.T) {
 
 	// The profile is used by later commands.
 	r = run(t, "", "balance", "retrieve", "-p", "staging")
-	if r.code != 0 || api.last(t).Header.Get("Authorization") != "Bearer ysk_test_abcdef123456" {
+	if r.code != 0 || api.last(t).Header.Get("Authorization") != "Bearer ysk_live_abcdef123456" {
 		t.Fatalf("exit %d: %s", r.code, r.err)
 	}
-	t.Setenv("YESLY_API_KEY", "ysk_test_fromenv")
+	t.Setenv("YESLY_API_KEY", "ysk_live_fromenv")
 	run(t, "", "balance", "retrieve", "-p", "staging")
-	if got := api.last(t).Header.Get("Authorization"); got != "Bearer ysk_test_fromenv" {
+	if got := api.last(t).Header.Get("Authorization"); got != "Bearer ysk_live_fromenv" {
 		t.Fatalf("the environment should win over the profile, got %s", got)
 	}
 
@@ -403,7 +404,7 @@ func TestLoginRejectsBadKeys(t *testing.T) {
 		w.WriteHeader(401)
 		_, _ = w.Write([]byte(`{"error":{"type":"authentication_error","message":"Invalid API key."}}`))
 	}
-	r := run(t, "ysk_test_revoked0000\n", "login", "--base-url", api.URL)
+	r := run(t, "ysk_live_revoked0000\n", "login", "--base-url", api.URL)
 	f, _ := config.Load()
 	if r.code != 1 || !strings.Contains(r.err, "Invalid API key") || len(f.Profiles) != 0 {
 		t.Fatalf("exit %d, err %q, profiles %v", r.code, r.err, f.Profiles)
@@ -456,7 +457,7 @@ func TestListenForwardsNewEventsSigned(t *testing.T) {
 	var errb bytes.Buffer
 	app := &App{In: strings.NewReader(""), Out: io.Discard, Err: &errb, Now: time.Now, Sleep: func(time.Duration) {}}
 	root := NewRoot(app)
-	root.SetArgs([]string{"listen", "--api-key", "ysk_test_x", "--base-url", api.URL, "--forward-to", local.URL,
+	root.SetArgs([]string{"listen", "--api-key", "ysk_live_x", "--base-url", api.URL, "--forward-to", local.URL,
 		"--secret", "whsec_local", "--interval", "10ms", "--events", "conversation.ended"})
 	ctx, cancel := context.WithCancel(context.Background())
 	done := make(chan error)
@@ -487,5 +488,50 @@ func TestListenForwardsNewEventsSigned(t *testing.T) {
 	}
 	if err := webhook.Verify([]byte(d.Body), d.Header.Get("Yesly-Signature"), "whsec_local", webhook.DefaultTolerance, time.Now()); err != nil {
 		t.Fatalf("signature: %v", err)
+	}
+	if strings.Contains(errb.String(), "whsec_local") {
+		t.Fatalf("listen printed the secret given with --secret:\n%s", errb.String())
+	}
+}
+
+func TestListenForwardToTakesPlainHTTPOnlyForThisMachine(t *testing.T) {
+	setup(t)
+	for target, ok := range map[string]bool{
+		"http://example.com/hook":          false,
+		"http://192.168.1.20:3000/hook":    false,
+		"ftp://localhost/hook":             false,
+		"localhost:3000":                   false,
+		"http://localhost:3000/hook":       true,
+		"http://127.0.0.1:3000/hook":       true,
+		"http://[::1]:3000/hook":           true,
+		"https://staging.example.com/hook": true,
+	} {
+		err := checkForwardTo(target)
+		if ok != (err == nil) {
+			t.Errorf("checkForwardTo(%q) error = %v", target, err)
+		}
+	}
+	r := run(t, "", "listen", "--api-key", "ysk_live_x", "--forward-to", "http://example.com/hook", "--secret", "whsec_local")
+	if r.code != 2 || !strings.Contains(r.err, "https://") {
+		t.Fatalf("exit %d, err %q", r.code, r.err)
+	}
+}
+
+func TestForwardFollowsNoRedirect(t *testing.T) {
+	var elsewhere atomic.Int32
+	other := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) { elsewhere.Add(1) }))
+	defer other.Close()
+	local := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, other.URL+"/hook", http.StatusTemporaryRedirect)
+	}))
+	defer local.Close()
+
+	app := &App{Now: time.Now}
+	_, err := app.forward(context.Background(), local.URL, "whsec_local", json.RawMessage(`{"id":"evt_1"}`))
+	if err == nil || !strings.Contains(err.Error(), "not followed") || !strings.Contains(err.Error(), other.URL) {
+		t.Fatalf("err = %v", err)
+	}
+	if n := elsewhere.Load(); n != 0 {
+		t.Fatalf("the event was posted to the redirect's target %d time(s)", n)
 	}
 }

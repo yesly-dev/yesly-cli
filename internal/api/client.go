@@ -53,15 +53,18 @@ type Response struct {
 	RequestID string
 }
 
-// Mode is "live" or "test" from the key prefix, or "" when unknown.
+// Mode is "live" for a Yesly API key (ysk_live_…), or "" when the key does
+// not look like one. There is no test mode.
 func Mode(key string) string {
-	switch {
-	case strings.HasPrefix(key, "ysk_live_"):
+	if strings.HasPrefix(key, "ysk_live_") {
 		return "live"
-	case strings.HasPrefix(key, "ysk_test_"):
-		return "test"
 	}
 	return ""
+}
+
+// Loopback reports whether a URL's host name is this machine.
+func Loopback(hostname string) bool {
+	return hostname == "localhost" || hostname == "127.0.0.1" || hostname == "::1"
 }
 
 // CheckBaseURL refuses anything but HTTPS, except http to this machine,
@@ -71,8 +74,7 @@ func CheckBaseURL(raw string) (string, error) {
 	if err != nil || u.Host == "" {
 		return "", fmt.Errorf("the base URL %q is not a valid URL", raw)
 	}
-	loopback := u.Hostname() == "localhost" || u.Hostname() == "127.0.0.1" || u.Hostname() == "::1"
-	if u.Scheme != "https" && !(u.Scheme == "http" && loopback) {
+	if u.Scheme != "https" && !(u.Scheme == "http" && Loopback(u.Hostname())) {
 		return "", errors.New("the base URL must use https:// (http:// is only allowed for localhost)")
 	}
 	return strings.TrimRight(raw, "/"), nil

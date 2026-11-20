@@ -6,7 +6,7 @@ Create a conversation
 
 Create a conversation.
 
-Asks an agent to contact someone. The conversation is `scheduled` until `start_at` (now by default) falls inside contact hours; then the agent tries each channel in order, waiting for the contact to engage before the next. Follow it with `conversation.*` events. Send an `Idempotency-Key`: a retry then never contacts anyone twice.
+Asks an agent to contact someone on one `channel`. The conversation is `scheduled` until `start_at` (now by default) falls inside contact hours. If the contact does not engage within the agent's wait, the contact plan in `then` follows, each step as a new conversation. Follow it with `conversation.*` events. Send an `Idempotency-Key`: a retry then never contacts anyone twice.
 
 API: POST /conversations
 

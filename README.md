@@ -212,8 +212,11 @@ yesly listen --forward-to http://localhost:3000/yesly/webhook
 `Yesly-Signature` header, the same way a webhook delivery arrives. The
 signing secret is created on first use and saved in the profile; it is printed
 when `listen` starts, so use it as the secret of your handler in development.
-Without `--forward-to`, events are printed as JSON lines. `--events` keeps
-only some types:
+A secret you pass with `--secret` is used and never printed. Events carry
+your customers' data, so `--forward-to` takes `http://` only for this machine
+(`localhost`, `127.0.0.1`, `::1`) and `https://` anywhere, and a redirect is
+reported, not followed. Without `--forward-to`, events are printed as JSON
+lines. `--events` keeps only some types:
 
 ```bash
 yesly listen --events conversation.ended,conversation.no_reply

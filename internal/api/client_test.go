@@ -15,7 +15,7 @@ import (
 func newClient(url string) (*Client, *[]time.Duration) {
 	var slept []time.Duration
 	return &Client{
-		APIKey:     "ysk_test_abc",
+		APIKey:     "ysk_live_abc",
 		BaseURL:    url,
 		APIVersion: "2026-10-01",
 		UserAgent:  "yesly-cli/test",
@@ -26,7 +26,7 @@ func newClient(url string) (*Client, *[]time.Duration) {
 
 func TestHeadersAndBody(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if got := r.Header.Get("Authorization"); got != "Bearer ysk_test_abc" {
+		if got := r.Header.Get("Authorization"); got != "Bearer ysk_live_abc" {
 			t.Errorf("Authorization = %q", got)
 		}
 		if got := r.Header.Get("Yesly-Version"); got != "2026-10-01" {
@@ -187,7 +187,7 @@ func TestCheckBaseURL(t *testing.T) {
 }
 
 func TestModeAndKeys(t *testing.T) {
-	if Mode("ysk_live_x") != "live" || Mode("ysk_test_x") != "test" || Mode("sk_x") != "" {
+	if Mode("ysk_live_x") != "live" || Mode("ysk_test_x") != "" || Mode("sk_x") != "" {
 		t.Fatal("Mode")
 	}
 	k := NewIdempotencyKey()
