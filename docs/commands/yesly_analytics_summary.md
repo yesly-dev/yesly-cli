@@ -26,8 +26,10 @@ yesly analytics summary [flags]
       --agent string       Only this agent's conversations.
       --channel string     Only conversations whose last channel is this one. One of: call, sms, whatsapp, email.
       --direction string   Only outbound or only inbound. One of: outbound, inbound.
+      --from string        First day of the period, in your account's time zone. Send it with to instead of range; the period is at most 366 days and ends today at the latest.
   -h, --help               help for summary
       --range string       Days covered, ending today. One of: 7d, 30d, 90d.
+      --to string          Last day of the period, with from.
 ```
 
 ### Options inherited from parent commands

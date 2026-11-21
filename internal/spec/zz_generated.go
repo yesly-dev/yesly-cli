@@ -656,6 +656,8 @@ var Operations = []Operation{
 		Description: "The figures behind the dashboard's Analytics page, for your own reports: conversations, outcomes, usage and spend, in total and day by day. Filter by agent, channel or direction.",
 		Query: []Field{
 			{Name: "range", Kind: String, Enum: []string{"7d", "30d", "90d"}, Default: "7d", Description: "Days covered, ending today."},
+			{Name: "from", Kind: String, Description: "First day of the period, in your account's time zone. Send it with to instead of range; the period is at most 366 days and ends today at the latest."},
+			{Name: "to", Kind: String, Description: "Last day of the period, with from."},
 			{Name: "agent", Kind: String, Description: "Only this agent's conversations."},
 			{Name: "channel", Kind: String, Enum: []string{"call", "sms", "whatsapp", "email"}, Description: "Only conversations whose last channel is this one."},
 			{Name: "direction", Kind: String, Enum: []string{"outbound", "inbound"}, Description: "Only outbound or only inbound."},
