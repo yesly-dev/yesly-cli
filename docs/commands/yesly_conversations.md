@@ -38,6 +38,7 @@ yesly conversations [flags]
 * [yesly conversations delete](yesly_conversations_delete.md)	 - Delete a conversation
 * [yesly conversations list](yesly_conversations_list.md)	 - List conversations
 * [yesly conversations list-messages](yesly_conversations_list-messages.md)	 - List a conversation's messages
+* [yesly conversations record-conversion](yesly_conversations_record-conversion.md)	 - Record a conversion
 * [yesly conversations recording](yesly_conversations_recording.md)	 - Retrieve a call recording
 * [yesly conversations retrieve](yesly_conversations_retrieve.md)	 - Retrieve a conversation
 * [yesly conversations update](yesly_conversations_update.md)	 - Reschedule a conversation

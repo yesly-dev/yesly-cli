@@ -39,6 +39,7 @@ yesly agents update <id> [flags]
       --limits.daily-spend float               
       --limits.max-call-minutes int            
       --limits.messages-per-conversation int   
+      --outcome-results string                 The result of some of the agent's own outcomes, by code (outcome_invalid); null puts back the one Yesly set. Codes not sent keep theirs. It applies to past conversations too: analytics and campaigns count with the results as they are now. Your extension outcomes take result in extensions. JSON, inline or @file; a plain word, such as an id, is sent as a string.
       --recording.enabled                      
       --transfer-targets string                Replaces the list. Up to 10. JSON, inline or @file; a plain word, such as an id, is sent as a string.
       --transfer-wait-seconds float            How long the contact hears the transfer sound at least, 1 to 20 in halves of a second; null for the default, 1.5 (transfer_wait_invalid).

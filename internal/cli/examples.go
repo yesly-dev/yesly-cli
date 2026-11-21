@@ -46,10 +46,11 @@ var examples = map[string]string{
 	"conversations.retrieve": `  yesly conversations retrieve cnv_7Qp4Ns2Xk9Lm3D`,
 	"conversations.update": `  yesly conversations update cnv_7Qp4Ns2Xk9Lm3D --start-at 2026-12-03T10:00:00+01:00
   yesly conversations update cnv_7Qp4Ns2Xk9Lm3D --context '{"order": "8841", "delivery_window": "2026-12-03T09:00/13:00"}'`,
-	"conversations.delete":        `  yesly conversations delete cnv_7Qp4Ns2Xk9Lm3D`,
-	"conversations.cancel":        `  yesly conversations cancel cnv_7Qp4Ns2Xk9Lm3D`,
-	"conversations.list_messages": `  yesly conversations list-messages cnv_7Qp4Ns2Xk9Lm3D`,
-	"conversations.recording":     `  yesly conversations recording cnv_7Qp4Ns2Xk9Lm3D --message msg_…`,
+	"conversations.delete":            `  yesly conversations delete cnv_7Qp4Ns2Xk9Lm3D`,
+	"conversations.cancel":            `  yesly conversations cancel cnv_7Qp4Ns2Xk9Lm3D`,
+	"conversations.record_conversion": `  yesly conversations record-conversion cnv_7Qp4Ns2Xk9Lm3D --converted=true`,
+	"conversations.list_messages":     `  yesly conversations list-messages cnv_7Qp4Ns2Xk9Lm3D`,
+	"conversations.recording":         `  yesly conversations recording cnv_7Qp4Ns2Xk9Lm3D --message msg_…`,
 	"campaigns.create": `  yesly campaigns create --name "Delivery confirmations December" --agent agt_8Hd2kQ4mZ1LpXy \
     --channel call --start-at 2026-12-01T10:00:00+01:00 --rate 5 \
     --recipients @recipients.json --idempotency-key december-deliveries

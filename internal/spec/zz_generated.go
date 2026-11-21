@@ -68,6 +68,7 @@ var Operations = []Operation{
 			{Name: "transfer_wait_seconds", Kind: Number, Description: "How long the contact hears the transfer sound at least, 1 to 20 in halves of a second; null for the default, 1.5 (transfer_wait_invalid)."},
 			{Name: "extensions", Kind: JSON, Description: "Replaces them whole; null removes them (extension_invalid)."},
 			{Name: "integrations", Kind: JSON, Description: "Replaces the list, up to 5; null removes them (integration_invalid). An integration sent without its secret keeps the one stored for the same name and host. An integration a tool uses cannot be removed."},
+			{Name: "outcome_results", Kind: JSON, Description: "The result of some of the agent's own outcomes, by code (outcome_invalid); null puts back the one Yesly set. Codes not sent keep theirs. It applies to past conversations too: analytics and campaigns count with the results as they are now. Your extension outcomes take result in extensions."},
 		},
 		HasBody: true,
 	},
@@ -415,6 +416,20 @@ var Operations = []Operation{
 		Description: "Stops a `scheduled` or `in_progress` conversation: nothing more is sent, and a call in progress is hung up. `conversation.cancelled` fires. Anything else gets `409` `conversation_not_cancellable`.",
 		PathParams:  []Param{{Name: "id", Description: "Id of the conversation, prefixed cnv_."}},
 		Idempotent:  true,
+	},
+	{
+		Resource:    "conversations",
+		Method:      "record_conversion",
+		HTTP:        "POST",
+		Path:        "/conversations/{id}/conversion",
+		Summary:     "Record a conversion",
+		Description: "Says whether the conversation led to what your company wanted, as only you know it: the appointment was kept, the order paid, the debt settled. The agent's outcome is what the agent understood; this is what happened. It replaces the one recorded before, and is counted in analytics and in the conversation's campaign (`verified`). Only once the conversation has closed (`ended`, `no_reply`, `failed` or `cancelled`); before that, `409` `conversation_open`. A read-only key gets `403`.",
+		PathParams:  []Param{{Name: "id", Description: "Id of the conversation, prefixed cnv_."}},
+		Body: []Field{
+			{Name: "converted", Kind: Bool, Required: true, Description: "true if the conversation led to what your company wanted, false if it did not."},
+		},
+		HasBody:    true,
+		Idempotent: true,
 	},
 	{
 		Resource:    "conversations",
