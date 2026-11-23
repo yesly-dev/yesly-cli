@@ -34,6 +34,7 @@ yesly conversations list [flags]
       --limit int               Between 1 and 100. Default 20.
       --order string            desc (default) lists the newest first; asc the oldest. starting_after continues in the same order. One of: desc, asc.
       --outcome string          Only conversations that ended with this outcome code.
+      --reason string           Only conversations whose signals give this reason for how they ended (see signals in Get an analytics summary). Conversations are read a few minutes after they end. One of: not_reached_decider, not_now, not_interested, price, already_has, distrust, no_availability, info_missing, agent_error, contact_left, just_asking, wrong_contact, other.
       --starting-after string   Cursor: the id of the last item of the previous page.
       --status string           Only in this status. One of: scheduled, in_progress, ended, no_reply, cancelled, failed.
       --to string               Created on or before this day or time. A day ends at 23:59:59 in your account's time zone.

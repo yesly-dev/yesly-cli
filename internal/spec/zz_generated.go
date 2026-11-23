@@ -348,6 +348,7 @@ var Operations = []Operation{
 			{Name: "direction", Kind: String, Enum: []string{"outbound", "inbound"}, Description: "Only outbound or only inbound."},
 			{Name: "channel", Kind: String, Enum: []string{"call", "sms", "whatsapp", "email"}, Description: "Only conversations whose current or last channel is this one. With status=scheduled, those that will try this channel."},
 			{Name: "outcome", Kind: String, Description: "Only conversations that ended with this outcome code."},
+			{Name: "reason", Kind: String, Enum: []string{"not_reached_decider", "not_now", "not_interested", "price", "already_has", "distrust", "no_availability", "info_missing", "agent_error", "contact_left", "just_asking", "wrong_contact", "other"}, Description: "Only conversations whose signals give this reason for how they ended (see signals in Get an analytics summary). Conversations are read a few minutes after they end."},
 			{Name: "from", Kind: String, Description: "Created on or after this day or time. A day starts at 00:00 in your account's time zone."},
 			{Name: "to", Kind: String, Description: "Created on or before this day or time. A day ends at 23:59:59 in your account's time zone."},
 			{Name: "order", Kind: String, Enum: []string{"desc", "asc"}, Default: "desc", Description: "desc (default) lists the newest first; asc the oldest. starting_after continues in the same order."},
