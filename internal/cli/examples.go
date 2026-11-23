@@ -60,6 +60,8 @@ var examples = map[string]string{
 	"campaigns.pause":           `  yesly campaigns pause cmp_5Tn8Wq3Zr1Vb7K`,
 	"campaigns.resume":          `  yesly campaigns resume cmp_5Tn8Wq3Zr1Vb7K`,
 	"campaigns.cancel":          `  yesly campaigns cancel cmp_5Tn8Wq3Zr1Vb7K`,
+	"campaigns.get_recontact":   `  yesly campaigns get-recontact cmp_5Tn8Wq3Zr1Vb7K`,
+	"campaigns.recontact":       `  yesly campaigns recontact cmp_5Tn8Wq3Zr1Vb7K --data '{"groups":[{"group":"no_answer"}]}'`,
 	"campaigns.list_recipients": `  yesly campaigns list-recipients cmp_5Tn8Wq3Zr1Vb7K --status failed --all`,
 	"messages.list":             `  yesly messages list --conversation cnv_7Qp4Ns2Xk9Lm3D`,
 	"messages.create": `  yesly messages create --agent agt_8Hd2kQ4mZ1LpXy --contact ctc_3Kf9Lq2Wm7Rt4B \

@@ -35,9 +35,11 @@ yesly campaigns [flags]
 * [yesly](yesly.md)	 - Work with the Yesly API from your terminal
 * [yesly campaigns cancel](yesly_campaigns_cancel.md)	 - Cancel a campaign
 * [yesly campaigns create](yesly_campaigns_create.md)	 - Create a campaign
+* [yesly campaigns get-recontact](yesly_campaigns_get-recontact.md)	 - Get a campaign's re-contact groups
 * [yesly campaigns list](yesly_campaigns_list.md)	 - List campaigns
 * [yesly campaigns list-recipients](yesly_campaigns_list-recipients.md)	 - List a campaign's recipients
 * [yesly campaigns pause](yesly_campaigns_pause.md)	 - Pause a campaign
+* [yesly campaigns recontact](yesly_campaigns_recontact.md)	 - Launch a re-contact
 * [yesly campaigns resume](yesly_campaigns_resume.md)	 - Resume a campaign
 * [yesly campaigns retrieve](yesly_campaigns_retrieve.md)	 - Retrieve a campaign
 
