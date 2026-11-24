@@ -12,6 +12,9 @@ var examples = map[string]string{
 	"agents.archive_variant": `  yesly agents archive-variant agt_8Hd2kQ4mZ1LpXy var_4Hn2Lq8Wz5Rt1K`,
 	"agents.apply_variant":   `  yesly agents apply-variant agt_8Hd2kQ4mZ1LpXy var_4Hn2Lq8Wz5Rt1K --campaign cmp_5Tn8Wq3Zr1Vb7K`,
 	"agents.revert_change":   `  yesly agents revert-change agt_8Hd2kQ4mZ1LpXy chg_2Kd8Rq5Wn1Lz3P`,
+	"agents.list_insights":   `  yesly agents list-insights agt_8Hd2kQ4mZ1LpXy`,
+	"agents.test_insight":    `  yesly agents test-insight agt_8Hd2kQ4mZ1LpXy ins_7Rk2Pw9Lm4Tq1Z`,
+	"agents.dismiss_insight": `  yesly agents dismiss-insight agt_8Hd2kQ4mZ1LpXy ins_7Rk2Pw9Lm4Tq1Z`,
 	"agents.update": `  yesly agents update agt_8Hd2kQ4mZ1LpXy --limits.messages-per-conversation 20 --recording.enabled
   yesly agents update agt_8Hd2kQ4mZ1LpXy --contact-hours @hours.json`,
 	"agents.list_knowledge":     `  yesly agents list-knowledge agt_8Hd2kQ4mZ1LpXy`,

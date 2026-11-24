@@ -37,7 +37,9 @@ yesly agents [flags]
 * [yesly agents apply-variant](yesly_agents_apply-variant.md)	 - Apply a variant
 * [yesly agents archive-variant](yesly_agents_archive-variant.md)	 - Archive a variant
 * [yesly agents create-variant](yesly_agents_create-variant.md)	 - Create a variant
+* [yesly agents dismiss-insight](yesly_agents_dismiss-insight.md)	 - Dismiss a finding
 * [yesly agents list](yesly_agents_list.md)	 - List agents
+* [yesly agents list-insights](yesly_agents_list-insights.md)	 - List an agent's findings
 * [yesly agents list-knowledge](yesly_agents_list-knowledge.md)	 - List an agent's documents
 * [yesly agents list-variants](yesly_agents_list-variants.md)	 - List an agent's variants
 * [yesly agents pause](yesly_agents_pause.md)	 - Pause an agent
@@ -46,5 +48,6 @@ yesly agents [flags]
 * [yesly agents retrieve](yesly_agents_retrieve.md)	 - Retrieve an agent
 * [yesly agents retrieve-knowledge](yesly_agents_retrieve-knowledge.md)	 - Retrieve an agent's document
 * [yesly agents revert-change](yesly_agents_revert-change.md)	 - Revert a change
+* [yesly agents test-insight](yesly_agents_test-insight.md)	 - Try a finding
 * [yesly agents update](yesly_agents_update.md)	 - Update an agent's settings
 

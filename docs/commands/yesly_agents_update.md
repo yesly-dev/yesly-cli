@@ -29,6 +29,7 @@ yesly agents update <id> [flags]
 ### Options
 
 ```
+      --autopilot string                       suggest (the default): findings are proposed and a person tries them. auto: the agent's next campaign without variants tries its top finding, and a campaign's winning variant is applied to the agent (each change can be reverted). Allowed after two variants applied by a person; before, 409 autopilot_not_ready. One of: suggest, auto.
       --contact-hours string                   The agent's own contact hours, or null to use the account's. JSON, inline or @file; a plain word, such as an id, is sent as a string.
   -d, --data string                            JSON body, inline or @file (@- for stdin)
       --disclosure string                      Cannot be empty (disclosure_required).
