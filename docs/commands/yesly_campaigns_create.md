@@ -38,6 +38,7 @@ yesly campaigns create [flags]
       --recipients string        (required) Who to contact, in order. JSON, inline or @file; a plain word, such as an id, is sent as a string.
       --start-at string          Not before this time, and always inside contact hours. Default now. At most 90 days ahead.
       --then string              The contact plan for every recipient. Each step's agent must take every recipient's context. JSON, inline or @file; a plain word, such as an id, is sent as a string.
+      --variants strings         Variants of the agent to try against it (Create a variant). The people are split evenly between the agent as it is and each variant. One campaign with variants per agent at a time: another gets 409 experiment_running.
 ```
 
 ### Options inherited from parent commands

@@ -3,10 +3,15 @@ package cli
 // examples are the Example section of each operation's help, by resource.method.
 // TestEveryOperationHasAnExample keeps the list complete.
 var examples = map[string]string{
-	"agents.list":     `  yesly agents list`,
-	"agents.retrieve": `  yesly agents retrieve agt_8Hd2kQ4mZ1LpXy`,
-	"agents.pause":    `  yesly agents pause agt_8Hd2kQ4mZ1LpXy`,
-	"agents.resume":   `  yesly agents resume agt_8Hd2kQ4mZ1LpXy`,
+	"agents.list":            `  yesly agents list`,
+	"agents.retrieve":        `  yesly agents retrieve agt_8Hd2kQ4mZ1LpXy`,
+	"agents.pause":           `  yesly agents pause agt_8Hd2kQ4mZ1LpXy`,
+	"agents.resume":          `  yesly agents resume agt_8Hd2kQ4mZ1LpXy`,
+	"agents.list_variants":   `  yesly agents list-variants agt_8Hd2kQ4mZ1LpXy`,
+	"agents.create_variant":  `  yesly agents create-variant agt_8Hd2kQ4mZ1LpXy --name "Free first visit" --data '{"prompt":["Offer the first visit free when the contact hesitates."]}'`,
+	"agents.archive_variant": `  yesly agents archive-variant agt_8Hd2kQ4mZ1LpXy var_4Hn2Lq8Wz5Rt1K`,
+	"agents.apply_variant":   `  yesly agents apply-variant agt_8Hd2kQ4mZ1LpXy var_4Hn2Lq8Wz5Rt1K --campaign cmp_5Tn8Wq3Zr1Vb7K`,
+	"agents.revert_change":   `  yesly agents revert-change agt_8Hd2kQ4mZ1LpXy chg_2Kd8Rq5Wn1Lz3P`,
 	"agents.update": `  yesly agents update agt_8Hd2kQ4mZ1LpXy --limits.messages-per-conversation 20 --recording.enabled
   yesly agents update agt_8Hd2kQ4mZ1LpXy --contact-hours @hours.json`,
 	"agents.list_knowledge":     `  yesly agents list-knowledge agt_8Hd2kQ4mZ1LpXy`,
